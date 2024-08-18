@@ -1,0 +1,7 @@
+.container {
+    display: flex;
+    gap: 15px 10px;
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: calc(100vh - 100px);
+}

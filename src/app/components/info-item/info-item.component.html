@@ -1,0 +1,9 @@
+<div class="info-item flex flex-column fz-16">
+  <span class="info-title">{{ item().title }}</span>
+  <span class="info-value flex align-center">
+    @if (item().icon) {
+    <tui-svg class="gray-svg" [src]="item().icon"></tui-svg>
+    }
+    {{ item().value }}
+  </span>
+</div>

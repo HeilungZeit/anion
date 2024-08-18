@@ -1,0 +1,40 @@
+<a [routerLink]="['/anime', anime().id]" routerLinkActive="active">
+  <div class="wrapper">
+    <div class="img-wrapper">
+      <img
+        class="main-image"
+        [src]="anime().image['original']"
+        alt="cover image"
+      />
+      <span
+        class="status"
+        [ngClass]="{
+          'status-anons': anime().status === 'anons',
+          'status-ongoing': anime().status === 'ongoing',
+          'status-released': anime().status === 'released',
+        }"
+        >{{ viewStatus }}</span
+      >
+    </div>
+    <div class="score-wrap">
+      <div class="flex align-center">
+        <span>{{ anime().score }}</span>
+        <tui-svg class="gray-svg" src="tuiIconStar"></tui-svg>
+      </div>
+      @if (anime().kind === 'tv') {
+      <div>
+        <span
+          >{{ anime().episodes_aired }} из
+          {{ episodesAmount || "TBD" }} эпизодов</span
+        >
+      </div>
+      }
+    </div>
+
+    <div class="name-wrap">
+      <span class="name" [title]="anime().russian">{{
+        anime().russian | truncate : 42 : true
+      }}</span>
+    </div>
+  </div>
+</a>

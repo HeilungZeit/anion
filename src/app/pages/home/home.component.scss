@@ -1,0 +1,32 @@
+.home-container {
+    padding: 15px 20px;
+}
+
+.head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gap {
+    margin-top: 15px;
+}
+
+.link {
+    color: var(--secondary-color);
+    font-size: 1rem;
+    text-decoration: underline;
+}
+
+.skeleton {
+    width: 200px;
+    height: 370px;
+    border-radius: 10px;
+}
+
+.container {
+    display: flex;
+    gap: 20px 10px;
+    flex-wrap: wrap;
+    width: 100%;
+}

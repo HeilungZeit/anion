@@ -1,0 +1,54 @@
+<ani-content>
+  @if(anime()) {
+  <div class="bg-wrap">
+    <div class="bg-head">
+      <img class="bg-img" [src]="anime().image['original']" alt="background" />
+    </div>
+  </div>
+
+  <div class="main-wrapper">
+    <div class="container">
+      <div class="side-bar">
+        <div class="sticky-wrap">
+          <div class="image-wrap">
+            <img
+              class="main-image"
+              [src]="anime().image['original']"
+              [alt]="anime().name"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="main-content flex w-full flex-column">
+        <div class="content-header flex flex-column">
+          <div class="flex flex-column">
+            <span class="aired fz-16 fw-400"
+              >Аниме {{ anime().aired_on | getYear }}</span
+            >
+            <h1 class="fw-500 mt-10">{{ anime().russian }}</h1>
+          </div>
+
+          <div class="info-wrap flex mt-20">
+            @for (infoItem of infoItems; track infoItem.id) {
+            <ani-info-item [item]="infoItem"></ani-info-item>
+            }
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="tabs-wrapper">
+          <ani-tabs [tabs]="tabs"></ani-tabs>
+        </div>
+
+        <div class="description-wrap">
+          @if (tabIndex() === 0) {
+          <ani-descr />
+          } @else {
+          <p>pizda</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</ani-content>

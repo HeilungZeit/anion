@@ -1,0 +1,46 @@
+<ani-content>
+  <div class="home-container">
+    <div class="head">
+      <h2>Аниме этого сезона</h2>
+      <a
+        class="link"
+        routerLink="/series"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+      >
+        Больше
+      </a>
+    </div>
+
+    @defer (on immediate) {
+    <ani-list [animes]="store.animes()" />
+    }
+    <!-- @placeholder (minimum 200ms) {
+    <div class="container">
+      @for (item of skeletonItems; track item.id) {
+      <div
+        class="skeleton"
+        [class.tui-skeleton]="skeletonVisible"
+        [style.--tui-skeleton-radius.px]="radius"
+        [class.tui-skeleton_light]="lightMode"
+      ></div>
+      }
+    </div>
+    } -->
+
+    <div class="head gap">
+      <h2>Фильмы Аниме</h2>
+      <a
+        class="link"
+        routerLink="/movies"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+      >
+        Больше
+      </a>
+    </div>
+    @defer (on immediate) {
+    <ani-list [animes]="store.movies()" />
+    }
+  </div>
+</ani-content>
