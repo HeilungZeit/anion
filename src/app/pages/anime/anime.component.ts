@@ -84,7 +84,7 @@ export class AnimeComponent implements OnInit {
         id: v4(),
         value: this.anime().score,
         title: 'Оценка',
-        icon: 'tuiIconStar',
+        icon: '@tui.star',
       },
     ];
   }
