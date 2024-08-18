@@ -2018,6 +2018,13 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.2.tgz#821f8442f4175d8f0467b9daf26e3a18e2d02af2"
   integrity sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==
 
+"@taiga-ui/addon-charts@4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@taiga-ui/addon-charts/-/addon-charts-4.2.0.tgz#e25b55eac3458d6d61015e22960b1945d2abdc3e"
+  integrity sha512-BrwkQ+1NS1Cy3avXBxLzQFToNS8LgF3t0IAoAYhXMs0KIICIVKI87GUzUM4lxZFqXp9LrtHjxBTBjnKJtsr+Cg==
+  dependencies:
+    tslib "^2.6.3"
+
 "@taiga-ui/addon-mobile@^4.2.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@taiga-ui/addon-mobile/-/addon-mobile-4.2.0.tgz#2704af5c1c51b1bb05ca38b6d856f01dd0336d93"
@@ -2052,7 +2059,7 @@
   dependencies:
     tslib "^2.6.3"
 
-"@taiga-ui/icons@^4.2.0":
+"@taiga-ui/icons@4.2.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@taiga-ui/icons/-/icons-4.2.0.tgz#72fc370c0ef8821ca5d53a06b3fa291c116f5bfa"
   integrity sha512-lG2hyrIErivFW81bVsEX0q0dUvGOpTv5r0VriRmBqeS2sI+pBh2xj9AX1MOw8h1aMSsge2fPJWsBy9sD+1alhA==
