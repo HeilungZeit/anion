@@ -1,71 +1,47 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
-import { Anime, AnimeBasic, Id } from 'node-shikimori';
-import { ShikimoriService } from '../services/shikimori/shikimori.service';
-import { addBaseUrlToAnimeData, buildImgUrl } from '../helpers/buildImgUrl';
+import { YumiService } from '../services/yumi/yumi.service';
 
 type AnimeState = {
-  animes: AnimeBasic[];
-  movies: AnimeBasic[];
-  animeData: Anime;
-  isLoadingSeries: boolean;
-  isLoadingMovies: boolean;
+  feed: any;
+  isLoading: boolean;
   error: Error | void;
-  filter: { query: string; order: 'asc' | 'desc' };
 };
 
 const initialState: AnimeState = {
-  animes: [],
-  movies: [],
-  animeData: {} as Anime,
-  isLoadingSeries: false,
-  isLoadingMovies: false,
+  feed: {},
+  isLoading: false,
   error: void 0,
-  filter: { query: '', order: 'asc' },
 };
 
 export const AnimesStore = signalStore(
   withState(initialState),
-  withMethods((store, shikimoriService = inject(ShikimoriService)) => ({
-    async getSeasonAnime(): Promise<void> {
-      patchState(store, { isLoadingSeries: true });
+  withMethods((store, yumiService = inject(YumiService)) => ({
+    async getFeed(): Promise<void> {
+      patchState(store, { isLoading: true });
 
-      const animes = await shikimoriService.getAnimeForHomePage();
-
-      const animesWithCorrectImages = buildImgUrl(animes);
+      const feedData = await yumiService.getFeed();
 
       patchState(store, {
-        animes: animesWithCorrectImages,
-        isLoadingSeries: false,
+        feed: feedData,
+        isLoading: false,
       });
     },
-    async getMovieAnime(): Promise<void> {
-      patchState(store, { isLoadingMovies: true });
+    // async getAnimeData(id: Id<number>): Promise<void> {
+    //   const animeData = await shikimoriService.getAnimeById(id);
 
-      const movies = await shikimoriService.getMovieAnime();
+    //   const { image, screenshots } = addBaseUrlToAnimeData(animeData);
 
-      const moviesWithCorrectImages = buildImgUrl(movies);
-
-      patchState(store, {
-        movies: moviesWithCorrectImages,
-        isLoadingMovies: false,
-      });
-    },
-    async getAnimeData(id: Id<number>): Promise<void> {
-      const animeData = await shikimoriService.getAnimeById(id);
-
-      const { image, screenshots } = addBaseUrlToAnimeData(animeData);
-
-      patchState(store, {
-        animeData: {
-          ...animeData,
-          image,
-          screenshots,
-        },
-      });
-    },
-    removeAnimeData(): void {
-      patchState(store, { animeData: {} as Anime });
-    },
+    //   patchState(store, {
+    //     animeData: {
+    //       ...animeData,
+    //       image,
+    //       screenshots,
+    //     },
+    //   });
+    // },
+    // removeAnimeData(): void {
+    //   patchState(store, { animeData: {} as Anime });
+    // },
   }))
 );

@@ -1,6 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { AnimeTileComponent } from '../anime-tile/anime-tile.component';
-import { AnimeBasic } from 'node-shikimori';
 
 @Component({
   selector: 'ani-list',
@@ -10,5 +9,9 @@ import { AnimeBasic } from 'node-shikimori';
   styleUrl: './list.component.scss',
 })
 export class AnimeList {
-  @Input() animes: AnimeBasic[] = [];
+  animes = input<any>({});
+
+  get items() {
+    return this.animes().items as any[];
+  }
 }

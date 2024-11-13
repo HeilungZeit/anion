@@ -1,11 +1,15 @@
 .home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 15px 20px;
 }
 
 .head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .gap {

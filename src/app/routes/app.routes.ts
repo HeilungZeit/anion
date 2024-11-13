@@ -4,6 +4,7 @@ import { CatalogComponent } from '../pages/catalog/catalog.component';
 import { SeriesComponent } from '../pages/series/series.component';
 import { AnimeComponent } from '../pages/anime/anime.component';
 import { AnimeResolver } from './resolvers/anime.resolver';
+import { PageNotFoundComponent } from '../pages/page-not-found/page-not-found.component';
 
 export const routes: Routes = [
   {
@@ -26,9 +27,10 @@ export const routes: Routes = [
     title: 'Anime  - Anion',
     component: AnimeComponent,
     resolve: {
-      anime: AnimeResolver,
+      animeInfo: AnimeResolver,
     },
   },
+  { path: '**', component: PageNotFoundComponent },
   //   {
   //     path: 'top',
   //     title: 'Top 100',

@@ -1,17 +1,6 @@
-import { NgDompurifySanitizer } from '@tinkoff/ng-dompurify';
-import {
-  TuiRootModule,
-  TuiDialogModule,
-  TuiAlertModule,
-  TUI_SANITIZER,
-  TuiButtonModule,
-  TuiThemeNightModule,
-  TuiModeModule,
-  TuiNightThemeService,
-} from '@taiga-ui/core';
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { TuiRoot, TuiDialog, TuiAlert, TuiButton } from '@taiga-ui/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Observable } from 'rxjs';
 
 import { ShikimoriService } from './services/shikimori/shikimori.service';
 import { AnimesStore } from './store/animes.store';
@@ -25,27 +14,15 @@ import { CommonModule } from '@angular/common';
   imports: [
     CommonModule,
     RouterOutlet,
-    TuiRootModule,
-    TuiDialogModule,
-    TuiAlertModule,
-    TuiButtonModule,
-    TuiThemeNightModule,
-    TuiModeModule,
-    TuiThemeNightModule,
-    TuiModeModule,
+    TuiRoot,
+    TuiDialog,
+    TuiAlert,
+    TuiButton,
     HeaderLayout,
     FooterLayout,
   ],
   templateUrl: './app.component.html',
-  providers: [
-    { provide: TUI_SANITIZER, useClass: NgDompurifySanitizer },
-    ShikimoriService,
-    AnimesStore,
-  ],
+  providers: [ShikimoriService, AnimesStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {
-  constructor(
-    @Inject(TuiNightThemeService) readonly night$: Observable<boolean>
-  ) {}
-}
+export class AppComponent {}

@@ -24,7 +24,6 @@ export class HomeComponent {
   }));
 
   async ngOnInit() {
-    this.store.getSeasonAnime();
-    this.store.getMovieAnime();
+    this.store.getFeed();
   }
 }

@@ -1,4 +1,4 @@
-<tui-tabs [(activeItemIndex)]="tabIndex">
+<tui-tabs [size]="'m'" [(activeItemIndex)]="tabIndex">
   @for (tab of tabs(); track $index) {
   <button tuiTab (click)="setTabIndex($index)">{{ tab }}</button>
   }

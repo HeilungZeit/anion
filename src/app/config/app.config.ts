@@ -1,5 +1,4 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { TuiRootModule } from '@taiga-ui/core';
 import {
   ApplicationConfig,
   provideZoneChangeDetection,
@@ -14,9 +13,15 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { NG_EVENT_PLUGINS } from '@taiga-ui/event-plugins';
 
 import { routes } from '../routes/app.routes';
 import { AnimesStore } from '../store/animes.store';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
+import { API_BASE_URL } from '../services/axios/axios.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,7 +33,12 @@ export const appConfig: ApplicationConfig = {
       withRouterConfig({ urlUpdateStrategy: 'eager' })
     ),
     provideClientHydration(withEventReplay()),
-    importProvidersFrom(TuiRootModule),
+    importProvidersFrom(),
+    NG_EVENT_PLUGINS,
     AnimesStore,
+    provideHttpClient(
+      withInterceptorsFromDi() // Подключаем интерсепторы из DI
+    ),
+    { provide: API_BASE_URL, useValue: 'http://localhost:3001' }, // доставать из env файла
   ],
 };

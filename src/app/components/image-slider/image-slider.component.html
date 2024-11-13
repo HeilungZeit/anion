@@ -1,0 +1,36 @@
+<div tuiCarouselButtons class="carousel-container mt-15">
+  <button
+    iconStart="@tui.chevron-left"
+    tuiIconButton
+    type="button"
+    (click)="carousel.prev()"
+  >
+    Previous
+  </button>
+  <tui-carousel
+    #carousel
+    [draggable]="true"
+    [itemsCount]="itemsCount()"
+    [(index)]="index"
+  >
+    @for (img of images(); track img['id']; let idx = $index) {
+    <img
+      *tuiItem
+      alt=""
+      draggable="false"
+      [src]="img['original']"
+      class="img-item"
+      [class.item_active]="idx === index + 1"
+      loading="lazy"
+    />
+    }
+  </tui-carousel>
+  <button
+    iconStart="@tui.chevron-right"
+    tuiIconButton
+    type="button"
+    (click)="carousel.next()"
+  >
+    Next
+  </button>
+</div>

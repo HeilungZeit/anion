@@ -1,0 +1,23 @@
+<div class="comment-wrapper">
+  <form
+    class="comment-form"
+    [formGroup]="commentForm"
+    (ngSubmit)="onSubmit()"
+    #form="ngForm"
+  >
+    <tui-textarea
+      formControlName="comment"
+      [expandable]="true"
+      [maxLength]="maxLength"
+    >
+      Оставить комментарий
+    </tui-textarea>
+    <tui-error formControlName="comment" [error]="[] | tuiFieldError | async" />
+  </form>
+  <button appearance="flat" size="m" tuiButton (click)="form.ngSubmit.emit()">
+    <tui-icon
+      icon="@tui.material.filled.send"
+      [style.color]="'var(--secondary-color)'"
+    />
+  </button>
+</div>

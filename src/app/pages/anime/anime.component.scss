@@ -1,96 +1,146 @@
 .bg-wrap {
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 400px;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 400px;
 }
 
 .bg-head {
-    position: relative;
-    margin: auto;
-    max-height: 600px;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
+  position: relative;
+  margin: auto;
+  max-height: 600px;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 .bg-img {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    color: transparent;
-    filter: blur(10px);
-    opacity: .7;
-    object-fit: cover;
-    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, .5), rgba(0, 0, 0, 0));
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  color: transparent;
+  filter: blur(10px);
+  opacity: 0.7;
+  object-fit: cover;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 }
 
 .main-wrapper {
-    width: 100%;
-    max-width: 1024px;
-    margin-left: auto;
-    margin-right: auto;
-    flex: 1 1;
+  width: 100%;
+  max-width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
+  flex: 1 1;
 }
 
 .container {
-    display: flex;
-    padding-top: 40px;
-    padding-bottom: 40px;
-    flex-wrap: nowrap;
-    flex-direction: row;
+  display: flex;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  min-height: 90vh;
 }
 
 .main-content {
-    margin-left: 25px;
+  margin-left: 25px;
+  overflow: auto;
 }
 
 .side-bar {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 240px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 240px;
 }
 
 .sticky-wrap {
-    position: sticky;
-    top: 80px;
+  position: sticky;
+  top: 80px;
 }
 
 .image-wrap {
-    aspect-ratio: 2 / 3;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 0 #0000, 0 0 #0000, 0 20px 25px -5px rgba(0, 0, 0, .1), 0 10px 10px -5px rgba(0, 0, 0, .04);;
+  aspect-ratio: 2 / 3;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .main-image {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
 .content-header {
-    padding-bottom: 15px;
+  padding-bottom: 15px;
 }
 
 .aired {
-    color: var(--text-secondary);
+  color: var(--text-secondary);
 }
 
 .info-wrap {
-    gap: 40px;
-    flex-wrap: wrap;
-    align-items: flex-end;
+  gap: 40px;
+  flex-wrap: wrap;
+  align-items: flex-end;
 }
 
 .tabs-wrapper {
-    width: fit-content;
+  width: fit-content;
+}
+
+.title {
+  line-height: 28px;
+}
+
+.description-wrap {
+  margin-bottom: 30px;
+}
+
+.chip-wrapper {
+  display: flex;
+  gap: 9px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.alternative-names {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  .alt-name:not(:last-child)::after {
+    content: " / ";
+  }
+}
+
+.alt-title {
+  font-size: 18px;
+}
+
+.alt-name {
+  color: var(--text-secondary);
+}
+
+.additional-data {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(200px, 1fr));
+  margin-top: 20px;
+}
+
+.comments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 75%;
 }

@@ -1,13 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { TuiElasticContainer } from '@taiga-ui/kit';
 import { TuiButton } from '@taiga-ui/core';
 import {} from '@taiga-ui/icons';
+import { TruncatePipe } from '../../pipes/truncate.pipe';
 
 @Component({
   selector: 'ani-descr',
   standalone: true,
-  imports: [TuiElasticContainer, TuiButton],
+  imports: [TuiElasticContainer, TuiButton, TruncatePipe],
   templateUrl: './descr.component.html',
   styleUrl: './descr.component.scss',
 })
-export class DescrComponent {}
+export class DescrComponent {
+  description = input<string>('');
+
+  isExpanded = signal(false);
+
+  cutDescription() {
+    if (this.description()?.length && (this.description()?.length || 0) > 400) {
+      return this.description()?.slice(0, 400) + '...';
+    }
+    return this.description;
+  }
+
+  toggelExpand() {
+    this.isExpanded.update((prev) => !prev);
+  }
+}

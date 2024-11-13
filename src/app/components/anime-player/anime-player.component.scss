@@ -1,0 +1,49 @@
+.player-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 15px;
+}
+
+.select-wrapper {
+  display: flex;
+  gap: 10px;
+}
+
+.select {
+  min-width: 240px;
+}
+
+.episodes-wrapper {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.episode-item {
+  font-size: 20px;
+  border: 1px solid #636363;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #636363;
+  }
+}
+
+.selected {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+
+  &:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+  }
+}

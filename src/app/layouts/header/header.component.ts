@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { TuiIcons } from '@taiga-ui/core';
+import { LogoComponent } from '../../icons/logo.component';
 
 @Component({
   selector: 'ani-header',
   standalone: true,
-  imports: [TuiIcons, RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, LogoComponent],
 
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',

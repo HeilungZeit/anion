@@ -1,23 +1,20 @@
 import { inject, Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { AnimesStore } from '../../store/animes.store';
-import { Id } from 'node-shikimori';
+import { YumiService } from '../../services/yumi/yumi.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AnimeResolver implements Resolve<any> {
   readonly store = inject(AnimesStore);
+  readonly yumiService = inject(YumiService);
 
   async resolve(route: ActivatedRouteSnapshot): Promise<any> {
     const id = route.paramMap.get('id');
 
-    const createId = (value: string | null): Id<number> => {
-      return { id: Number(value) };
-    };
+    const animeDetails = await this.yumiService.getAnime(Number(id));
 
-    await this.store.getAnimeData(createId(id));
-
-    return this.store.animeData();
+    return { animeDetails };
   }
 }

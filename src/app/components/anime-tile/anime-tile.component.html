@@ -1,12 +1,15 @@
-<a [routerLink]="['/anime', anime().id]" routerLinkActive="active">
+<a [routerLink]="['/anime', anime().animeId]" routerLinkActive="active">
   <div class="wrapper">
     <div class="img-wrapper">
       <img
+        width="200"
+        height="300"
         class="main-image"
-        [src]="anime().image['original']"
+        [ngSrc]="anime().poster['big']"
         alt="cover image"
+        priority
       />
-      <span
+      <!-- <span
         class="status"
         [ngClass]="{
           'status-anons': anime().status === 'anons',
@@ -14,26 +17,32 @@
           'status-released': anime().status === 'released',
         }"
         >{{ viewStatus }}</span
-      >
+      > -->
     </div>
     <div class="score-wrap">
-      <div class="flex align-center">
-        <span>{{ anime().score }}</span>
-        <tui-svg class="gray-svg" src="@tui.star"></tui-svg>
+      <div class="flex align-center gap-5">
+        <span>{{ anime().rating['average'] | number : '1.0-1' }}</span>
+        <tui-icon
+          [style.height.px]="16"
+          [style.width.px]="16"
+          [style.fill]="'#ffc700'"
+          class="svg"
+          icon="@tui.star"
+        ></tui-icon>
       </div>
-      @if (anime().kind === 'tv') {
+      <!-- @if (anime().kind === 'tv') {
       <div>
         <span
           >{{ anime().episodes_aired }} из
           {{ episodesAmount || "TBD" }} эпизодов</span
         >
       </div>
-      }
+      } -->
     </div>
 
     <div class="name-wrap">
-      <span class="name" [title]="anime().russian">{{
-        anime().russian | truncate : 42 : true
+      <span class="name" [title]="anime().title">{{
+        anime().title | truncate : 42 : true
       }}</span>
     </div>
   </div>

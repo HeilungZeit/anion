@@ -1,5 +1,5 @@
 <div class="container">
-  @for (anime of animes; track anime.id) {
+  @for (anime of animes().items; track anime.animeId) {
   <ani-tile [anime]="anime" />
   }
 </div>

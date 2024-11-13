@@ -1,0 +1,54 @@
+<div class="player-container mt-20">
+  <div class="select-wrapper">
+    <tui-select class="select" #select [(ngModel)]="selectedDubber">
+      Выберите озвучку
+      <tui-data-list *tuiDataList>
+        <tui-opt-group label="Озвучки">
+          <button
+            *ngFor="let dabber of dubbersData().dubbers"
+            tuiOption
+            type="button"
+            [value]="dabber"
+          >
+            {{ dabber }}
+          </button>
+        </tui-opt-group>
+        <tui-opt-group label="Субтитры">
+          <button
+            tuiOption
+            type="button"
+            *ngFor="let subtitle of dubbersData().subtitles"
+            [value]="subtitle"
+          >
+            {{ subtitle }}
+          </button>
+        </tui-opt-group>
+      </tui-data-list>
+    </tui-select>
+
+    <tui-select [disabled]="!selectedDubber()" class="select" #select [(ngModel)]="selectedPlayer">
+      Выберите плеер
+      <tui-data-list *tuiDataList>
+        <tui-opt-group label="Озвучки">
+          <button *ngFor="let player of playersData()" tuiOption type="button" [value]="player">
+            {{ player }}
+          </button>
+        </tui-opt-group>
+      </tui-data-list>
+    </tui-select>
+  </div>
+
+  @defer {
+    <div class="episodes-wrapper">
+      @for (item of playersDataWithEpisodes()[selectedDubber()][selectedPlayer()]; track item.id) {
+        <div class="episode-item" [class.selected]="selectedEpisode()?.id === item.id" (click)="selectedEpisode.set(item)">
+          {{ item.episode }}
+        </div>
+      }
+    </div>
+  }
+
+  @defer {
+    <ani-player-iframe [url]="getSafeUrl(selectedEpisode()?.iframeUrl ?? '')" />
+  }
+</div>

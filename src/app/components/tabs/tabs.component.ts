@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, output } from '@angular/core';
-import { TuiTabsModule } from '@taiga-ui/kit';
+import { TuiTabs } from '@taiga-ui/kit';
 
 @Component({
   selector: 'ani-tabs',
   standalone: true,
-  imports: [TuiTabsModule, CommonModule],
+  imports: [TuiTabs, CommonModule],
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.scss',
 })

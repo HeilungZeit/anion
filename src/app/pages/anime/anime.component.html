@@ -1,8 +1,11 @@
 <ani-content>
-  @if(anime()) {
   <div class="bg-wrap">
     <div class="bg-head">
-      <img class="bg-img" [src]="anime().image['original']" alt="background" />
+      <img
+        class="bg-img"
+        [src]="animeDetails().poster['fullsize']"
+        alt="background"
+      />
     </div>
   </div>
 
@@ -12,9 +15,12 @@
         <div class="sticky-wrap">
           <div class="image-wrap">
             <img
+              width="240"
+              height="360"
               class="main-image"
-              [src]="anime().image['original']"
-              [alt]="anime().name"
+              [ngSrc]="animeDetails().poster['fullsize']"
+              [alt]="animeDetails().title"
+              priority
             />
           </div>
         </div>
@@ -22,33 +28,74 @@
       <div class="main-content flex w-full flex-column">
         <div class="content-header flex flex-column">
           <div class="flex flex-column">
-            <span class="aired fz-16 fw-400"
-              >Аниме {{ anime().aired_on | getYear }}</span
-            >
-            <h1 class="fw-500 mt-10">{{ anime().russian }}</h1>
+            <span class="aired fz-16 fw-400">Аниме {{ animeDetails().year }}</span>
+            <h1 class="title fw-500 mt-10">{{ animeDetails().title }}</h1>
           </div>
 
           <div class="info-wrap flex mt-20">
-            @for (infoItem of infoItems; track infoItem.id) {
+            @for (infoItem of infoItems(); track infoItem.id) {
             <ani-info-item [item]="infoItem"></ani-info-item>
             }
           </div>
         </div>
 
         <div class="divider"></div>
-        <div class="tabs-wrapper">
+        <div class="tabs-wrapper mb-15">
           <ani-tabs [tabs]="tabs"></ani-tabs>
         </div>
 
         <div class="description-wrap">
           @if (tabIndex() === 0) {
-          <ani-descr />
-          } @else {
-          <p>pizda</p>
+          <ani-descr [description]="animeDetails().description || '' | removeChars" />
+
+          <div class="chip-wrapper">
+            @for (genre of animeDetails().genres; track genre.id) {
+            <ani-chip [chipValue]="genre.title"></ani-chip>
+            }
+          </div>
+
+          <div class="additional-data">
+            <div class="alternative-names">
+              <span class="alt-title">Альтернативные названия:</span>
+              <div>
+                @for (name of animeDetails().otherTitles; track name) {
+                <span class="alt-name">{{ name }}</span>
+                }
+              </div>
+            </div>
+
+            <!-- @if (animeDetails().fandubbers.length) {
+            <div>
+              <span class="alt-title">Фандаберы:</span>
+              <div class="chip-wrapper">
+                @for (dabber of anime().fandubbers; track dabber) {
+                <ani-chip [chipValue]="dabber"></ani-chip>
+                }
+              </div>
+            </div>
+            } -->
+          </div>
+<!-- 
+          @if (getScreenshots.length) {
+          <div #screenshotsContainer class="mt-25">
+            <span class="fz-20 fw-600">Скриншоты</span>
+            <ani-image-slider [images]="getScreenshots"></ani-image-slider>
+          </div>
+          } -->
+
+          @defer (on immediate) {
+            <ani-player [videos]="animeDetails().videos"></ani-player>
+          }
+        } @else {
+          <span>тут херани комменты</span>
           }
         </div>
+
+        <!-- <div class="comments-container">
+          <span class="fz-24 fw-600">Комментарии</span>
+          <ani-comment-input></ani-comment-input>
+        </div> -->
       </div>
     </div>
   </div>
-  }
 </ani-content>

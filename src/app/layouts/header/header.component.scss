@@ -1,11 +1,13 @@
 .header-wrapper {
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    height: 56px;
-    margin: auto;
-    padding: 0 60px;
-    background-color: var(--header-bg-color);
+  position: fixed;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  height: 56px;
+  margin: auto;
+  padding: 0 60px;
+  background-color: var(--header-bg-color-rgb);
 }
 
 .nav-container {

@@ -1,5 +1,7 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   inject,
   OnInit,
@@ -9,16 +11,38 @@ import {
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { v4 } from 'uuid';
 
 import { ContentLayout } from '../../layouts/content/content.component';
-import { AnimesStore } from '../../store/animes.store';
 import { YearPipe } from '../../pipes/year.pipe';
 import { InfoItemComponent } from '../../components/info-item/info-item.component';
-import { InfoItemI } from './interfaces/types';
-import { StatusService } from '../../services/helpers/get-status.service';
 import { TabsComponent } from '../../components/tabs/tabs.component';
 import { DescrComponent } from '../../components/descr/descr.component';
+import { AnimePlayerComponent } from '../../components/anime-player/anime-player.component';
+import { RemoveCharactersPipe } from '../../pipes/removeChars.pipe';
+import { ChipComponent } from '../../components/chip/chip.component';
+import { CommentInputComponent } from '../../components/comment-input/comment-input.component';
+import { ImageSliderComponent } from '../../components/image-slider/image-slider.component';
+import { InfoItemI } from './interfaces/types';
+import { take } from 'rxjs';
+
+// Добавляем интерфейс для данных аниме
+interface AnimeDetails {
+  episodes: { aired: number };
+  animeStatus: { title: string };
+  minAge: { titleLong: string };
+  rating: { average: number };
+  randomScreenshots: Array<{ sizes: { full: string } }>;
+  videos: any[];
+  fandubbers: any[];
+  genres: any[];
+  otherTitles: any[];
+  description: string;
+  year: number;
+  title: string;
+  poster: { fullsize: string };
+}
 
 @Component({
   selector: 'app-anime',
@@ -33,69 +57,96 @@ import { DescrComponent } from '../../components/descr/descr.component';
     InfoItemComponent,
     TabsComponent,
     DescrComponent,
+    AnimePlayerComponent,
+    RemoveCharactersPipe,
+    ChipComponent,
+    CommentInputComponent,
+    ImageSliderComponent,
   ],
   templateUrl: './anime.component.html',
   styleUrl: './anime.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush, // Добавляем OnPush стратегию
 })
 export class AnimeComponent implements OnInit {
-  private readonly store = inject(AnimesStore);
   private readonly route = inject(ActivatedRoute);
-  readonly anime = signal(this.store.animeData());
-  tabIndex = signal(0);
+  private readonly sanitizer = inject(DomSanitizer);
 
-  tabsComponentRef: Signal<TabsComponent> = viewChild.required(TabsComponent);
+  readonly animeDetails = signal<AnimeDetails>({} as AnimeDetails);
+  readonly tabIndex = signal(0);
+  tabs = ['Описание', 'Плеер'];
 
-  constructor(private statusService: StatusService) {
-    effect(() => {
-      this.tabsComponentRef().onTabChange.subscribe((event: number) => {
-        this.tabIndex.set(event);
-      });
-    });
+  readonly tabsComponentRef: Signal<TabsComponent> =
+    viewChild.required(TabsComponent);
+
+  constructor() {
+    effect(
+      () => {
+        const unsubscribe = this.tabsComponentRef().onTabChange.subscribe(
+          (index: number) => {
+            this.tabIndex.set(index);
+          }
+        );
+
+        return () => unsubscribe.unsubscribe();
+      },
+      { allowSignalWrites: true }
+    );
   }
 
-  readonly statuses = {
-    anons: 'Анонс',
-    ongoing: 'Онгоинг',
-    released: 'Вышло',
-  };
+  // Мемоизируем функцию с помощью computed
+  readonly getSafeUrl = computed(() => {
+    return (url: string): SafeResourceUrl =>
+      this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  });
 
-  readonly ratings = {
-    none: '0+',
-    g: '0+',
-    pg: '6+',
-    pg_13: '13+',
-    r: '17+',
-    r_plus: '17+',
-    rx: '18+',
-  };
+  readonly infoItems = computed<InfoItemI[]>(() => {
+    const details = this.animeDetails();
+    if (!details) return [];
 
-  readonly tabs: string[] = ['Описание', 'Плеер'];
-
-  get infoItems(): InfoItemI[] {
     return [
-      { id: v4(), value: this.anime().episodes_aired, title: 'Эпизодов' },
       {
         id: v4(),
-        value: this.statusService.getStatus(this.anime().status),
-        title: 'Статус',
+        value: details.episodes?.aired ?? 0,
+        title: 'Эпизодов',
+        icon: '',
       },
-      { id: v4(), value: this.ratings[this.anime().rating], title: 'PG' },
       {
         id: v4(),
-        value: this.anime().score,
+        value: details.animeStatus?.title ?? 'Неизвестно',
+        title: 'Статус',
+        icon: '',
+      },
+      {
+        id: v4(),
+        value: details.minAge?.titleLong ?? 'Не указано',
+        title: 'PG',
+        icon: '',
+      },
+      {
+        id: v4(),
+        value: details.rating?.average?.toFixed(1) ?? '0.0',
         title: 'Оценка',
         icon: '@tui.star',
       },
     ];
-  }
+  });
 
-  showTabIndex(index: any) {
-    console.log(index);
-  }
+  readonly screenshots = computed(() => {
+    const details = this.animeDetails();
+    if (!details?.randomScreenshots) return [];
 
-  async ngOnInit() {
-    this.route.data.subscribe((data) => {
-      this.anime.set(data['anime']);
+    return details.randomScreenshots.map((item) => ({
+      id: v4(),
+      original: item.sizes.full,
+    }));
+  });
+
+  ngOnInit(): void {
+    // Используем take(1) чтобы автоматически отписаться после первого значения
+    this.route.data.pipe(take(1)).subscribe(({ animeInfo }) => {
+      if (animeInfo?.['animeDetails']) {
+        this.animeDetails.set(animeInfo['animeDetails']);
+      }
     });
   }
 }
