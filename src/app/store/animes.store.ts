@@ -13,7 +13,7 @@ const initialState: AnimeState = {
 };
 
 export const AnimesStore = signalStore(
-  withState(initialState),
+  { protectedState: false }, withState(initialState),
   withMethods((store, yumiService = inject(YumiService)) => ({
     async getFeed(): Promise<void> {
       patchState(store, { isLoading: true });
