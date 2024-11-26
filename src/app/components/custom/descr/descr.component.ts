@@ -1,8 +1,7 @@
 import { Component, input, signal } from '@angular/core';
 import { TuiElasticContainer } from '@taiga-ui/kit';
 import { TuiButton } from '@taiga-ui/core';
-import {} from '@taiga-ui/icons';
-import { TruncatePipe } from '../../pipes/truncate.pipe';
+import { TruncatePipe } from '../../../pipes/truncate.pipe';
 
 @Component({
   selector: 'ani-descr',

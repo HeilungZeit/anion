@@ -13,7 +13,7 @@ import {
   TuiTextareaModule,
   TuiTextfieldControllerModule,
 } from '@taiga-ui/legacy';
-import { maxLengthMessageFactory } from '../../helpers/factories';
+import { maxLengthMessageFactory } from '../../../helpers/factories';
 
 @Component({
   selector: 'ani-comment-input',

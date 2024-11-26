@@ -38,17 +38,13 @@
     </tui-select>
   </div>
 
-  @defer {
-    <div class="episodes-wrapper">
-      @for (item of playersDataWithEpisodes()[selectedDubber()][selectedPlayer()]; track item.id) {
-        <div class="episode-item" [class.selected]="selectedEpisode()?.id === item.id" (click)="selectedEpisode.set(item)">
-          {{ item.episode }}
-        </div>
-      }
-    </div>
-  }
+  <div class="episodes-wrapper">
+    @for (item of playersDataWithEpisodes()[selectedDubber()][selectedPlayer()]; track item.id) {
+      <div class="episode-item" [class.selected]="selectedEpisode()?.id === item.id" (click)="selectedEpisode.set(item)">
+        {{ item.episode }}
+      </div>
+    }
+  </div>
 
-  @defer {
-    <ani-player-iframe [url]="getSafeUrl(selectedEpisode()?.iframeUrl ?? '')" />
-  }
+  <ani-player-iframe [url]="selectedEpisode()?.iframeUrl ?? ''" />
 </div>

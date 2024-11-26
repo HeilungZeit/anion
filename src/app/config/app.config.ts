@@ -5,6 +5,8 @@ import {
   importProvidersFrom,
 } from '@angular/core';
 import {
+  GuardsCheckEnd,
+  NavigationEnd,
   provideRouter,
   withInMemoryScrolling,
   withRouterConfig,
@@ -22,6 +24,7 @@ import {
   withInterceptorsFromDi,
 } from '@angular/common/http';
 import { API_BASE_URL } from '../services/axios/axios.service';
+import { provideNgProgressRouter } from 'ngx-progressbar/router';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -40,5 +43,10 @@ export const appConfig: ApplicationConfig = {
       withInterceptorsFromDi() // Подключаем интерсепторы из DI
     ),
     { provide: API_BASE_URL, useValue: 'http://localhost:3001' }, // доставать из env файла
+    provideNgProgressRouter({
+      startEvents: [GuardsCheckEnd],
+      completeEvents: [NavigationEnd],
+      minDuration: 100,
+    }),
   ],
 };

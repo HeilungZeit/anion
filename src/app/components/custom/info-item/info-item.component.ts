@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
-import { InfoItemI } from '../../pages/anime/interfaces/types';
+import { InfoItemI } from '../../../pages/anime/interfaces/types';
 import { TuiIcon } from '@taiga-ui/core';
 
 @Component({

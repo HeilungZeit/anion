@@ -10,24 +10,19 @@ import {
   viewChild,
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { v4 } from 'uuid';
 
 import { ContentLayout } from '../../layouts/content/content.component';
-import { YearPipe } from '../../pipes/year.pipe';
-import { InfoItemComponent } from '../../components/info-item/info-item.component';
-import { TabsComponent } from '../../components/tabs/tabs.component';
-import { DescrComponent } from '../../components/descr/descr.component';
-import { AnimePlayerComponent } from '../../components/anime-player/anime-player.component';
+import { InfoItemComponent } from '../../components/custom/info-item/info-item.component';
+import { TabsComponent } from '../../components/custom/tabs/tabs.component';
+import { DescrComponent } from '../../components/custom/descr/descr.component';
+import { AnimePlayerComponent } from '../../components/custom/anime-player/anime-player.component';
 import { RemoveCharactersPipe } from '../../pipes/removeChars.pipe';
-import { ChipComponent } from '../../components/chip/chip.component';
-import { CommentInputComponent } from '../../components/comment-input/comment-input.component';
-import { ImageSliderComponent } from '../../components/image-slider/image-slider.component';
+import { ChipComponent } from '../../components/custom/chip/chip.component';
 import { InfoItemI } from './interfaces/types';
 import { take } from 'rxjs';
 
-// Добавляем интерфейс для данных аниме
 interface AnimeDetails {
   episodes: { aired: number };
   animeStatus: { title: string };
@@ -41,7 +36,13 @@ interface AnimeDetails {
   description: string;
   year: number;
   title: string;
-  poster: { fullsize: string };
+  poster: {
+    fullsize: string;
+    medium: string;
+    big: string;
+    huge: string;
+    small: string;
+  };
 }
 
 @Component({
@@ -49,19 +50,14 @@ interface AnimeDetails {
   standalone: true,
   imports: [
     ContentLayout,
-    RouterLink,
-    RouterLinkActive,
     NgOptimizedImage,
     CommonModule,
-    YearPipe,
     InfoItemComponent,
     TabsComponent,
     DescrComponent,
     AnimePlayerComponent,
     RemoveCharactersPipe,
     ChipComponent,
-    CommentInputComponent,
-    ImageSliderComponent,
   ],
   templateUrl: './anime.component.html',
   styleUrl: './anime.component.scss',
@@ -69,11 +65,10 @@ interface AnimeDetails {
 })
 export class AnimeComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly sanitizer = inject(DomSanitizer);
 
   readonly animeDetails = signal<AnimeDetails>({} as AnimeDetails);
   readonly tabIndex = signal(0);
-  tabs = ['Описание', 'Плеер'];
+  readonly tabs = ['Описание', 'Похожие аниме'];
 
   readonly tabsComponentRef: Signal<TabsComponent> =
     viewChild.required(TabsComponent);
@@ -92,12 +87,6 @@ export class AnimeComponent implements OnInit {
       { allowSignalWrites: true }
     );
   }
-
-  // Мемоизируем функцию с помощью computed
-  readonly getSafeUrl = computed(() => {
-    return (url: string): SafeResourceUrl =>
-      this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  });
 
   readonly infoItems = computed<InfoItemI[]>(() => {
     const details = this.animeDetails();

@@ -1,7 +1,7 @@
 import { Component, inject, Input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ContentLayout } from '../../layouts/content/content.component';
-import { AnimeList } from '../../components/list/list.component';
+import { AnimeList } from '../../components/custom/list/list.component';
 import { AnimesStore } from '../../store/animes.store';
 
 @Component({

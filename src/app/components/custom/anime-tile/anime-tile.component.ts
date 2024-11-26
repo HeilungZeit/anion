@@ -3,7 +3,7 @@ import { TuiIcon } from '@taiga-ui/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
-import { TruncatePipe } from '../../pipes/truncate.pipe';
+import { TruncatePipe } from '../../../pipes/truncate.pipe';
 
 @Component({
   selector: 'ani-tile',

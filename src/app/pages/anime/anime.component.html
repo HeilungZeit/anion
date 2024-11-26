@@ -5,6 +5,7 @@
         class="bg-img"
         [src]="animeDetails().poster['fullsize']"
         alt="background"
+        priority
       />
     </div>
   </div>
@@ -19,7 +20,6 @@
               height="360"
               class="main-image"
               [ngSrc]="animeDetails().poster['fullsize']"
-              [alt]="animeDetails().title"
               priority
             />
           </div>

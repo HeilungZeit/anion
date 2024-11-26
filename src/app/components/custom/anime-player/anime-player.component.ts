@@ -3,12 +3,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   input,
   OnInit,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TuiDataList } from '@taiga-ui/core';
 import { TuiSelectModule } from '@taiga-ui/legacy';
 import { PlayerIframeComponent } from '../anime-player-iframe/anime-player-iframe.component';
@@ -48,9 +48,16 @@ export class AnimePlayerComponent implements OnInit {
   selectedPlayer = signal<string>('');
   selectedEpisode = signal<Episode | null>(null);
 
-  constructor(private sanitizer: DomSanitizer) {}
-
   readonly videos = input<VideoData[]>([]);
+
+  constructor() {
+    effect(() => {
+      const currentDubber = this.selectedDubber();
+      const currentPlayer = this.selectedPlayer();
+
+      this.updateSelectedEpisode(currentDubber, currentPlayer);
+    });
+  }
 
   ngOnInit() {
     if (this.videos()?.length > 0) {
@@ -70,6 +77,15 @@ export class AnimePlayerComponent implements OnInit {
     }
   }
 
+  private updateSelectedEpisode(dubber: string, player: string): void {
+    if (dubber && player) {
+      const episodes = this.playersDataWithEpisodesCache()[dubber][player];
+      if (episodes?.length > 0) {
+        this.selectedEpisode.set(episodes[0]);
+      }
+    }
+  }
+
   private readonly playersDataWithEpisodesCache = computed(() =>
     this.getPlayersDataWithEpisodes(this.videos())
   );
@@ -83,15 +99,6 @@ export class AnimePlayerComponent implements OnInit {
   );
 
   readonly dubbersData = computed(() => this.getDubbersData(this.videos()));
-
-  readonly currentEpisodeUrl = computed(() => {
-    const episode = this.selectedEpisode();
-    return episode ? this.getSafeUrl(episode.iframeUrl) : null;
-  });
-
-  getSafeUrl(url: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
 
   private getDubbersData(videos: VideoData[]): {
     dubbers: string[];

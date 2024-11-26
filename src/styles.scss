@@ -6,10 +6,19 @@
   --tui-text-primary-on-accent-1: #e5e7eb;
   --tui-text-primary: #e5e7eb !important;
   --text-secondary: hsla(0, 0%, 100%, 0.64);
+  --ng-progress-color: var(--secondary-color);
 }
 
 html {
   background: var(--bg-color);
+}
+
+.ng-bar-placeholder {
+  height: 3px !important;
+}
+
+.ng-bar {
+  background-color: var(--ng-progress-color);
 }
 
 .mr-5 {

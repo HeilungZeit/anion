@@ -5,13 +5,11 @@ import { YumiService } from '../services/yumi/yumi.service';
 type AnimeState = {
   feed: any;
   isLoading: boolean;
-  error: Error | void;
 };
 
 const initialState: AnimeState = {
   feed: {},
   isLoading: false,
-  error: void 0,
 };
 
 export const AnimesStore = signalStore(
@@ -27,21 +25,5 @@ export const AnimesStore = signalStore(
         isLoading: false,
       });
     },
-    // async getAnimeData(id: Id<number>): Promise<void> {
-    //   const animeData = await shikimoriService.getAnimeById(id);
-
-    //   const { image, screenshots } = addBaseUrlToAnimeData(animeData);
-
-    //   patchState(store, {
-    //     animeData: {
-    //       ...animeData,
-    //       image,
-    //       screenshots,
-    //     },
-    //   });
-    // },
-    // removeAnimeData(): void {
-    //   patchState(store, { animeData: {} as Anime });
-    // },
   }))
 );
