@@ -14,4 +14,8 @@ export class YumiService {
   async getFeed(): Promise<any> {
     return this.axiosService.get('anime/feed');
   }
+
+  async getRecommendations(id: number): Promise<any> {
+    return this.axiosService.get(`/anime/${id}/recommendations`);
+  }
 }

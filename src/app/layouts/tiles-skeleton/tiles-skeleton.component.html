@@ -1,1 +1,29 @@
-<p>tiles-skeleton works!</p>
+<div>
+    <ngx-skeleton-loader [theme]="{
+        'height': '300px',
+        'width': '200px',
+        'border-radius': '8px',
+        'background-color': '#474747'
+    }" animation="progress-dark" appearance="line">
+    </ngx-skeleton-loader>
+    <div class="score-skeleton">
+        <ngx-skeleton-loader [theme]="{
+            'height': '20px',
+            'width': '30px',
+            'background-color': '#474747'
+        }" animation="progress-dark" appearance="line">
+        </ngx-skeleton-loader>
+        <ngx-skeleton-loader [theme]="{
+            'height': '20px',
+            'width': '100px',
+            'background-color': '#474747'
+        }" animation="progress-dark" appearance="line">
+        </ngx-skeleton-loader>
+    </div>
+    <ngx-skeleton-loader [theme]="{
+        'height': '20px',
+        'width': '200px',
+        'background-color': '#474747'
+    }" animation="progress-dark" appearance="line">
+    </ngx-skeleton-loader>
+</div>

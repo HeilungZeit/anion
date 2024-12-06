@@ -13,6 +13,10 @@ html {
   background: var(--bg-color);
 }
 
+body {
+  min-height: 100vh;
+}
+
 .ng-bar-placeholder {
   height: 3px !important;
 }

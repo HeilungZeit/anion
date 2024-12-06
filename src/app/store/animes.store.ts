@@ -18,7 +18,15 @@ export const AnimesStore = signalStore(
     async getFeed(): Promise<void> {
       patchState(store, { isLoading: true });
 
-      const feedData = await yumiService.getFeed();
+      let feedData: any;
+
+      try {
+        feedData = await yumiService.getFeed();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        patchState(store, { isLoading: false });
+      }
 
       patchState(store, {
         feed: feedData,

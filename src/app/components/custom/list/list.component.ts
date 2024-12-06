@@ -1,17 +1,21 @@
-import { Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 import { AnimeTileComponent } from '../anime-tile/anime-tile.component';
+import { TilesSkeletonComponent } from '../../../layouts/tiles-skeleton/tiles-skeleton.component';
 
 @Component({
   selector: 'ani-list',
-  standalone: true,
-  imports: [AnimeTileComponent],
+  imports: [AnimeTileComponent, TilesSkeletonComponent],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnimeList {
-  animes = input<any>({});
+  animes = input<any[]>([]);
 
-  get items() {
-    return this.animes().items as any[];
-  }
+  getArrayWithLength = computed(() => new Array(20).fill(0));
 }

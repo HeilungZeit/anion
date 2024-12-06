@@ -1,27 +1,27 @@
 <a [routerLink]="['/anime', anime().animeId]" routerLinkActive="active">
   <div class="wrapper">
     <div class="img-wrapper">
-      <img
-        width="200"
-        height="300"
-        class="main-image"
-        [ngSrc]="anime().poster['big']"
-        alt="cover image"
-        priority
-      />
-      <!-- <span
+        <img
+          width="200"
+          height="300"
+          class="main-image"
+          [ngSrc]="anime().poster['big']"
+          alt="cover image"
+          priority
+        />
+      <span
         class="status"
         [ngClass]="{
-          'status-anons': anime().status === 'anons',
-          'status-ongoing': anime().status === 'ongoing',
-          'status-released': anime().status === 'released',
+          'status-anons': anime().animeStatus.alias === 'announcement',
+          'status-ongoing': anime().animeStatus.alias === 'ongoing',
+          'status-released': anime().animeStatus.alias === 'released',
         }"
-        >{{ viewStatus }}</span
-      > -->
+        >{{ anime().animeStatus.title }}</span
+      >
     </div>
-    <div class="score-wrap">
+    <div class="score-wrap" >
       <div class="flex align-center gap-5">
-        <span>{{ anime().rating['average'] | number : '1.0-1' }}</span>
+        <span class="fz-14">{{ anime().rating['average'] | toFixedValue }}</span>
         <tui-icon
           [style.height.px]="16"
           [style.width.px]="16"
@@ -30,18 +30,20 @@
           icon="@tui.star"
         ></tui-icon>
       </div>
-      <!-- @if (anime().kind === 'tv') {
+      @if (anime().type.shortname === 'ТВ') {
       <div>
-        <span
-          >{{ anime().episodes_aired }} из
-          {{ episodesAmount || "TBD" }} эпизодов</span
-        >
+        @if (anime().episodesAired) {
+          <span
+            >{{ anime().episodesAired }} из
+            {{ anime().episodes || 'TBD' }} эпизодов</span
+          >
+        }
       </div>
-      } -->
+      }
     </div>
 
     <div class="name-wrap">
-      <span class="name" [title]="anime().title">{{
+      <span class="name fz-14" [title]="anime().title">{{
         anime().title | truncate : 42 : true
       }}</span>
     </div>

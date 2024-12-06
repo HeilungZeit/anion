@@ -31,7 +31,6 @@ interface VideoData {
 
 @Component({
   selector: 'ani-player',
-  standalone: true,
   imports: [
     FormsModule,
     NgForOf,
@@ -44,18 +43,34 @@ interface VideoData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnimePlayerComponent implements OnInit {
+  readonly videos = input<VideoData[]>([]);
+
   selectedDubber = signal<string>('');
   selectedPlayer = signal<string>('');
   selectedEpisode = signal<Episode | null>(null);
 
-  readonly videos = input<VideoData[]>([]);
-
   constructor() {
     effect(() => {
-      const currentDubber = this.selectedDubber();
-      const currentPlayer = this.selectedPlayer();
+      const dubber = this.selectedDubber();
+      if (dubber) {
+        const playersData = this.playersDataWithEpisodesCache()[dubber];
+        const firstPlayer = Object.keys(playersData).find(
+          (key) => !key.endsWith('-count')
+        );
 
-      this.updateSelectedEpisode(currentDubber, currentPlayer);
+        if (firstPlayer) {
+          this.selectedPlayer.set(firstPlayer);
+        }
+      }
+    });
+
+    effect(() => {
+      const dubber = this.selectedDubber();
+      const player = this.selectedPlayer();
+      if (dubber && player) {
+        const playersData = this.playersDataWithEpisodesCache()[dubber];
+        this.selectedEpisode.set(playersData[player][0]);
+      }
     });
   }
 
@@ -77,15 +92,6 @@ export class AnimePlayerComponent implements OnInit {
     }
   }
 
-  private updateSelectedEpisode(dubber: string, player: string): void {
-    if (dubber && player) {
-      const episodes = this.playersDataWithEpisodesCache()[dubber][player];
-      if (episodes?.length > 0) {
-        this.selectedEpisode.set(episodes[0]);
-      }
-    }
-  }
-
   private readonly playersDataWithEpisodesCache = computed(() =>
     this.getPlayersDataWithEpisodes(this.videos())
   );
@@ -97,6 +103,30 @@ export class AnimePlayerComponent implements OnInit {
   readonly playersDataWithEpisodes = computed(() =>
     this.playersDataWithEpisodesCache()
   );
+
+  readonly dubberEpisodesCount = computed(() => {
+    const counts = Object.keys(
+      this.playersDataWithEpisodesCache()[this.selectedDubber()]
+    ).filter((key) => key.endsWith('-count'));
+
+    const maxCount = Math.max(
+      ...counts.map(
+        (count) =>
+          this.playersDataWithEpisodesCache()[this.selectedDubber()][count]
+      )
+    );
+
+    return `(${maxCount} эп.)`;
+  });
+
+  readonly playerEpisodesCount = computed(() => {
+    const counts =
+      this.playersDataWithEpisodesCache()[this.selectedDubber()][
+        this.selectedPlayer()
+      ];
+
+    return `(${counts.length} эп.)`;
+  });
 
   readonly dubbersData = computed(() => this.getDubbersData(this.videos()));
 

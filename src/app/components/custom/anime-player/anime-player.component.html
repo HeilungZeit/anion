@@ -1,6 +1,6 @@
 <div class="player-container mt-20">
   <div class="select-wrapper">
-    <tui-select class="select" #select [(ngModel)]="selectedDubber">
+    <tui-select class="select" #select [(ngModel)]="selectedDubber" [valueContent]="selectedDubber() + ' ' + dubberEpisodesCount()">
       Выберите озвучку
       <tui-data-list *tuiDataList>
         <tui-opt-group label="Озвучки">
@@ -10,7 +10,7 @@
             type="button"
             [value]="dabber"
           >
-            {{ dabber }}
+            {{ dabber }} {{ dubberEpisodesCount() }}
           </button>
         </tui-opt-group>
         <tui-opt-group label="Субтитры">
@@ -20,18 +20,18 @@
             *ngFor="let subtitle of dubbersData().subtitles"
             [value]="subtitle"
           >
-            {{ subtitle }}
+            {{ subtitle }} {{ dubberEpisodesCount() }}
           </button>
         </tui-opt-group>
       </tui-data-list>
     </tui-select>
 
-    <tui-select [disabled]="!selectedDubber()" class="select" #select [(ngModel)]="selectedPlayer">
+    <tui-select [disabled]="!selectedDubber()" class="select" #select [(ngModel)]="selectedPlayer" [valueContent]="selectedPlayer() + ' ' + playerEpisodesCount()">
       Выберите плеер
       <tui-data-list *tuiDataList>
         <tui-opt-group label="Озвучки">
           <button *ngFor="let player of playersData()" tuiOption type="button" [value]="player">
-            {{ player }}
+            {{ player }} {{ playerEpisodesCount() }}
           </button>
         </tui-opt-group>
       </tui-data-list>

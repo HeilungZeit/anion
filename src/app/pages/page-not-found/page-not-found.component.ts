@@ -5,11 +5,10 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 @Component({
-  selector: 'app-page-not-found',
-  standalone: true,
-  imports: [ContentLayout],
-  templateUrl: './page-not-found.component.html',
-  styleUrl: './page-not-found.component.scss',
+    selector: 'app-page-not-found',
+    imports: [ContentLayout],
+    templateUrl: './page-not-found.component.html',
+    styleUrl: './page-not-found.component.scss'
 })
 export class PageNotFoundComponent implements AfterViewInit {
   @ViewChild('canvas') canvasRef!: ElementRef;

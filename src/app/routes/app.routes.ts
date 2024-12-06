@@ -1,39 +1,42 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from '../pages/home/home.component';
-import { CatalogComponent } from '../pages/catalog/catalog.component';
-import { SeriesComponent } from '../pages/series/series.component';
-import { AnimeComponent } from '../pages/anime/anime.component';
 import { AnimeResolver } from './resolvers/anime.resolver';
-import { PageNotFoundComponent } from '../pages/page-not-found/page-not-found.component';
 
 export const routes: Routes = [
   {
     path: '',
     title: 'Home - Anion',
-    component: HomeComponent,
+    loadComponent: () =>
+      import('../pages/home/home.component').then((m) => m.HomeComponent),
   },
   {
     path: 'catalog',
     title: 'Catalog  - Anion',
-    component: CatalogComponent,
+    loadComponent: () =>
+      import('../pages/catalog/catalog.component').then(
+        (m) => m.CatalogComponent
+      ),
   },
   {
     path: 'series',
     title: 'Series  - Anion',
-    component: SeriesComponent,
+    loadComponent: () =>
+      import('../pages/series/series.component').then((m) => m.SeriesComponent),
   },
   {
     path: 'anime/:id',
     title: 'Anime  - Anion',
-    component: AnimeComponent,
+    loadComponent: () =>
+      import('../pages/anime/anime.component').then((m) => m.AnimeComponent),
     resolve: {
       animeInfo: AnimeResolver,
     },
+    runGuardsAndResolvers: 'paramsOrQueryParamsChange',
   },
-  { path: '**', component: PageNotFoundComponent },
-  //   {
-  //     path: 'top',
-  //     title: 'Top 100',
-  //     component: TopComponent,
-  //   },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('../pages/page-not-found/page-not-found.component').then(
+        (m) => m.PageNotFoundComponent
+      ),
+  },
 ];

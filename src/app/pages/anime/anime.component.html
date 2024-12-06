@@ -41,7 +41,7 @@
 
         <div class="divider"></div>
         <div class="tabs-wrapper mb-15">
-          <ani-tabs [tabs]="tabs"></ani-tabs>
+          <ani-tabs [tabs]="tabs" [pageId]="pageId()" (onTabChange)="tabIndex.set($event)"></ani-tabs>
         </div>
 
         <div class="description-wrap">
@@ -64,16 +64,24 @@
               </div>
             </div>
 
-            <!-- @if (animeDetails().fandubbers.length) {
+            @if (animeDetails().episodes.nextDate) {
+              @let nextEpisode = getTimeDiffereceToNextEpisode();
+
+              <div class="vertical-divider"></div>
+
             <div>
-              <span class="alt-title">Фандаберы:</span>
-              <div class="chip-wrapper">
-                @for (dabber of anime().fandubbers; track dabber) {
-                <ani-chip [chipValue]="dabber"></ani-chip>
-                }
+              <span class="alt-title">Следующий эпизод:
+                <tui-icon
+                  tuiHintDirection="top"
+                  tuiTooltip="Дата выхода в Японии"
+                />
+              </span>
+              <div class="next-episode-wrapper mt-10">
+                <span class="alt-name fz-16">{{ nextEpisode?.date }}</span>
+                <span class="alt-name fz-16">{{ nextEpisode?.timeLeft }}</span>
               </div>
             </div>
-            } -->
+            }
           </div>
 <!-- 
           @if (getScreenshots.length) {
@@ -87,7 +95,7 @@
             <ani-player [videos]="animeDetails().videos"></ani-player>
           }
         } @else {
-          <span>тут херани комменты</span>
+          <app-recommendations></app-recommendations>
           }
         </div>
 

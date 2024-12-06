@@ -44,6 +44,7 @@
     object-fit: cover;
     border-radius: 4px;
     transition: filter 125ms ease-in-out;
+    background-color: var(--tui-background-base-alt);
 }
 
 .name-wrap {

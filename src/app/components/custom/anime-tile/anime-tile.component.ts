@@ -1,13 +1,17 @@
-import { Component, input, OnInit } from '@angular/core';
-import { TuiIcon } from '@taiga-ui/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import {
+  CommonModule,
+  NgOptimizedImage,
+  PRECONNECT_CHECK_BLOCKLIST,
+} from '@angular/common';
+import { TuiIcon } from '@taiga-ui/core';
 
 import { TruncatePipe } from '../../../pipes/truncate.pipe';
+import { ToFixedValuePipe } from '../../../pipes/toFixedValue.pipe';
 
 @Component({
   selector: 'ani-tile',
-  standalone: true,
   imports: [
     TuiIcon,
     NgOptimizedImage,
@@ -15,15 +19,18 @@ import { TruncatePipe } from '../../../pipes/truncate.pipe';
     CommonModule,
     RouterLink,
     RouterLinkActive,
+    ToFixedValuePipe,
+  ],
+  providers: [
+    {
+      provide: PRECONNECT_CHECK_BLOCKLIST,
+      useValue: 'https://img.yani.tv',
+    },
   ],
   templateUrl: './anime-tile.component.html',
   styleUrl: './anime-tile.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnimeTileComponent implements OnInit {
+export class AnimeTileComponent {
   anime = input.required<any>();
-
-  ngOnInit(): void {
-    if (this.anime()) {
-    }
-  }
 }

@@ -10,18 +10,17 @@ import { NgProgressbar } from 'ngx-progressbar';
 import { NgProgressRouter } from 'ngx-progressbar/router';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterOutlet,
-    TuiRoot,
-    HeaderLayout,
-    NgProgressbar,
-    NgProgressRouter,
-  ],
-  templateUrl: './app.component.html',
-  providers: [ShikimoriService, AnimesStore],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-root',
+    imports: [
+        CommonModule,
+        RouterOutlet,
+        TuiRoot,
+        HeaderLayout,
+        NgProgressbar,
+        NgProgressRouter,
+    ],
+    templateUrl: './app.component.html',
+    providers: [ShikimoriService, AnimesStore],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {}

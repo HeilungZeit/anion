@@ -1,15 +1,9 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'ani-player-iframe',
-  standalone: true,
   imports: [CommonModule],
   template: `
     <iframe
@@ -36,23 +30,23 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlayerIframeComponent implements OnInit {
+export class PlayerIframeComponent {
   url = input.required<string>();
 
   constructor(private sanitizer: DomSanitizer) {}
 
-  ngOnInit() {
-    console.log(this.url());
-  }
-
   getIframeSrcDoc(url: string): SafeHtml {
+    const baseUrl = new URL(url).origin;
+
     const srcDoc = `
       <!DOCTYPE html>
       <html style="overflow: hidden;">
         <head>
-          <meta http-equiv="Content-Security-Policy" 
-                content="default-src 'self' ${url} 'unsafe-inline' 'unsafe-eval'; 
-                         connect-src 'none';">
+         <meta http-equiv="Content-Security-Policy" 
+                content="default-src 'self' ${baseUrl} 'unsafe-inline' 'unsafe-eval';
+                         frame-src ${baseUrl} https://player.aksor.pro/ https://*.video-lk-ok-ii.store/;
+                         connect-src ${baseUrl} https://img.yani.tv/ https://player.aksor.pro/ https://*.video-lk-ok-ii.store/;
+                         media-src ${baseUrl} https://*.video-lk-ok-ii.store/">
         </head>
         <body style="margin:0">
           <iframe src="${url}" 

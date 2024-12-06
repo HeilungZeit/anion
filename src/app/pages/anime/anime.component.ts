@@ -2,12 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   OnInit,
-  Signal,
   signal,
-  viewChild,
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -20,11 +17,15 @@ import { DescrComponent } from '../../components/custom/descr/descr.component';
 import { AnimePlayerComponent } from '../../components/custom/anime-player/anime-player.component';
 import { RemoveCharactersPipe } from '../../pipes/removeChars.pipe';
 import { ChipComponent } from '../../components/custom/chip/chip.component';
+import { RecommendationsComponent } from './components/recommendations/recommendations.component';
+
 import { InfoItemI } from './interfaces/types';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+import { TuiTooltip } from '@taiga-ui/kit';
+import { TuiIcon } from '@taiga-ui/core';
 
 interface AnimeDetails {
-  episodes: { aired: number };
+  episodes: { aired?: number; nextDate?: number; count?: number };
   animeStatus: { title: string };
   minAge: { titleLong: string };
   rating: { average: number };
@@ -47,7 +48,6 @@ interface AnimeDetails {
 
 @Component({
   selector: 'app-anime',
-  standalone: true,
   imports: [
     ContentLayout,
     NgOptimizedImage,
@@ -58,34 +58,41 @@ interface AnimeDetails {
     AnimePlayerComponent,
     RemoveCharactersPipe,
     ChipComponent,
+    RecommendationsComponent,
+    TuiTooltip,
+    TuiIcon,
   ],
   templateUrl: './anime.component.html',
   styleUrl: './anime.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush, // Добавляем OnPush стратегию
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnimeComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly destroy$ = new Subject<void>();
 
   readonly animeDetails = signal<AnimeDetails>({} as AnimeDetails);
   readonly tabIndex = signal(0);
   readonly tabs = ['Описание', 'Похожие аниме'];
+  pageId = signal(0);
 
-  readonly tabsComponentRef: Signal<TabsComponent> =
-    viewChild.required(TabsComponent);
+  ngOnInit(): void {
+    this.route.data
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ animeInfo }) => {
+        if (animeInfo?.['animeDetails']) {
+          this.animeDetails.set(animeInfo['animeDetails']);
+          this.tabIndex.set(0);
+        }
+      });
 
-  constructor() {
-    effect(
-      () => {
-        const unsubscribe = this.tabsComponentRef().onTabChange.subscribe(
-          (index: number) => {
-            this.tabIndex.set(index);
-          }
-        );
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      this.pageId.set(params['id']);
+    });
+  }
 
-        return () => unsubscribe.unsubscribe();
-      },
-      { allowSignalWrites: true }
-    );
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   readonly infoItems = computed<InfoItemI[]>(() => {
@@ -95,7 +102,9 @@ export class AnimeComponent implements OnInit {
     return [
       {
         id: v4(),
-        value: details.episodes?.aired ?? 0,
+        value: `${details.episodes?.aired ?? 0} из ${
+          details.episodes?.count || 'TBD'
+        }`,
         title: 'Эпизодов',
         icon: '',
       },
@@ -120,6 +129,49 @@ export class AnimeComponent implements OnInit {
     ];
   });
 
+  readonly getTimeDiffereceToNextEpisode = computed<{
+    date: string;
+    timeLeft: string;
+  } | null>(() => {
+    const details = this.animeDetails();
+    const nextDate = details?.episodes?.nextDate;
+
+    if (!nextDate) return null;
+
+    const date = new Date(nextDate * 1000);
+    const formattedDate = date.toLocaleString('ru-RU', {
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    const now = Date.now();
+    const nextEpisodeDate = nextDate * 1000;
+    const diff = nextEpisodeDate - now;
+
+    if (diff <= 0) {
+      return {
+        date: formattedDate,
+        timeLeft: '(уже вышло)',
+      };
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    let timeLeft = 'Через ';
+    if (days > 0) timeLeft += `${days} дн. `;
+    if (hours > 0) timeLeft += `${hours} ч. `;
+    timeLeft += `${minutes} мин.`;
+
+    return {
+      date: formattedDate,
+      timeLeft,
+    };
+  });
+
   readonly screenshots = computed(() => {
     const details = this.animeDetails();
     if (!details?.randomScreenshots) return [];
@@ -129,13 +181,4 @@ export class AnimeComponent implements OnInit {
       original: item.sizes.full,
     }));
   });
-
-  ngOnInit(): void {
-    // Используем take(1) чтобы автоматически отписаться после первого значения
-    this.route.data.pipe(take(1)).subscribe(({ animeInfo }) => {
-      if (animeInfo?.['animeDetails']) {
-        this.animeDetails.set(animeInfo['animeDetails']);
-      }
-    });
-  }
 }

@@ -108,15 +108,22 @@
 
 .chip-wrapper {
   display: flex;
-  gap: 9px;
-  margin-top: 20px;
+  margin-top: 15px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.next-episode-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .alternative-names {
   display: flex;
   flex-direction: column;
-
+  max-width: 450px;
   gap: 10px;
 
   .alt-name:not(:last-child)::after {
@@ -133,9 +140,9 @@
 }
 
 .additional-data {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(200px, 1fr));
+  display: flex;
   margin-top: 20px;
+  height: fit-content;
 }
 
 .comments-container {
@@ -143,4 +150,15 @@
   flex-direction: column;
   gap: 18px;
   max-width: 75%;
+}
+
+.vertical-divider {
+  &::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 100%;
+    margin: 0 20px;
+    background-color: var(--text-secondary);
+  }
 }

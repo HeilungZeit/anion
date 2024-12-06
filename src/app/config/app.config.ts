@@ -1,8 +1,8 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   ApplicationConfig,
-  provideZoneChangeDetection,
   importProvidersFrom,
+  provideExperimentalZonelessChangeDetection,
 } from '@angular/core';
 import {
   GuardsCheckEnd,
@@ -29,7 +29,8 @@ import { provideNgProgressRouter } from 'ngx-progressbar/router';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideExperimentalZonelessChangeDetection(),
+    // provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),

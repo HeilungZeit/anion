@@ -6,7 +6,6 @@ import { AnimesStore } from '../../store/animes.store';
 
 @Component({
   selector: 'ani-home',
-  standalone: true,
   imports: [ContentLayout, AnimeList, RouterLink, RouterLinkActive],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -19,7 +18,7 @@ export class HomeComponent {
   readonly movies = 'movies' as 'movies';
   readonly radius = 10;
   readonly lightMode = true;
-  readonly skeletonItems = Array.from({ length: 14 }).map((_, index) => ({
+  readonly skeletonItems = Array.from({ length: 20 }).map((_, index) => ({
     id: index,
   }));
 

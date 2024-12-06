@@ -4,11 +4,10 @@ import { InfoItemI } from '../../../pages/anime/interfaces/types';
 import { TuiIcon } from '@taiga-ui/core';
 
 @Component({
-  selector: 'ani-info-item',
-  standalone: true,
-  imports: [CommonModule, TuiIcon],
-  templateUrl: './info-item.component.html',
-  styleUrl: './info-item.component.scss',
+    selector: 'ani-info-item',
+    imports: [CommonModule, TuiIcon],
+    templateUrl: './info-item.component.html',
+    styleUrl: './info-item.component.scss'
 })
 export class InfoItemComponent {
   item = input.required<InfoItemI>({ alias: 'item' });

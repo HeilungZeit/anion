@@ -1,0 +1,16 @@
+.container {
+    display: flex;
+    gap: 15px 10px;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 1260px;
+    min-height: calc(100vh - 100px);
+}
+  
+.score-skeleton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 20px;
+  padding: 0 2px;
+}
