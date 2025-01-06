@@ -1,37 +1,67 @@
-import { inject } from '@angular/core';
-import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
-import { YumiService } from '../services/yumi/yumi.service';
+import { signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
+import { effect, inject } from '@angular/core';
 
-type AnimeState = {
-  feed: any;
+import {
+  AnimeDetailsI,
+  GenreGroup,
+  GenreResponse,
+} from '../interfaces/anime.types';
+import { createAnimeMethods } from './animes.methods';
+import { YumiService } from '../services/yumi/yumi.service';
+import { AnimeQueryI } from '../interfaces/queries.types';
+import { DEFAULT_QUERY } from '../constants';
+
+export type AnimeState = {
+  feed: {
+    seasonAnime: AnimeDetailsI[];
+    schedule: any;
+    updates: any;
+  };
+  catalog: {
+    anime: AnimeDetailsI[];
+    query: AnimeQueryI;
+    isCatalogLoading: boolean;
+    haveMore: boolean;
+  };
+  genres: {
+    genres: GenreResponse<number>[];
+    groups: GenreGroup[];
+    isGenresLoading: boolean;
+  };
   isLoading: boolean;
+  recommendations: AnimeDetailsI[];
+  isRecommendationsLoading: boolean;
 };
 
 const initialState: AnimeState = {
-  feed: {},
+  feed: {
+    seasonAnime: [],
+    schedule: [],
+    updates: [],
+  },
+  genres: { genres: [], groups: [], isGenresLoading: false },
+  recommendations: [],
+  catalog: {
+    anime: [] as AnimeDetailsI[],
+    query: DEFAULT_QUERY,
+    haveMore: true,
+    isCatalogLoading: false,
+  },
   isLoading: false,
+  isRecommendationsLoading: false,
 };
 
 export const AnimesStore = signalStore(
-  { protectedState: false }, withState(initialState),
-  withMethods((store, yumiService = inject(YumiService)) => ({
-    async getFeed(): Promise<void> {
-      patchState(store, { isLoading: true });
-
-      let feedData: any;
-
-      try {
-        feedData = await yumiService.getFeed();
-      } catch (error) {
-        console.error(error);
-      } finally {
-        patchState(store, { isLoading: false });
-      }
-
-      patchState(store, {
-        feed: feedData,
-        isLoading: false,
+  { protectedState: false },
+  withState<AnimeState>(initialState),
+  withMethods((store, yumiService = inject(YumiService)) =>
+    createAnimeMethods(store, yumiService)
+  ),
+  withHooks({
+    onInit(store) {
+      effect(() => {
+        console.log(store.catalog().anime);
       });
     },
-  }))
+  })
 );

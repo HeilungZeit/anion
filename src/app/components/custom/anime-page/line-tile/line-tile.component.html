@@ -1,0 +1,22 @@
+<a class="flex w-fit" [routerLink]="['/anime', anime().animeId]" routerLinkActive="active">
+  <div
+    [class.aired]="anime().animeStatus.alias === 'released'"
+    [class.not-aired]="anime().animeStatus.alias !== 'released'"
+    class="line-wrapper flex align-center gap-10 fw-600"
+  >
+    <img
+      class="line-image"
+      [src]="anime().poster.small"
+      [alt]="anime().title"
+    />
+
+    <div class="line-title fz-14">
+      <span class="line-title-text">{{ anime().title }}</span>
+      <span>{{ anime().type.shortname }}, {{ anime().data.text }}
+        @if (anime().year) {
+        , {{ anime().year }}
+        }
+      </span>
+    </div>
+  </div>
+</a>

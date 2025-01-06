@@ -5,4 +5,11 @@
 
 .info-title {
     color: var(--text-secondary);
+    text-transform: capitalize;
+}
+
+.info-value {
+    &:first-letter {
+        text-transform: uppercase;
+    }
 }

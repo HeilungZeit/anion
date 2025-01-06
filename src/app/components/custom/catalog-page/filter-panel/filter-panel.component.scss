@@ -1,0 +1,22 @@
+.header-panel {
+    margin: 8px 0 20px 0;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.year-wrapper {
+    flex-wrap: nowrap;
+}
+
+.label-full {
+    flex: 1;
+}
+
+.btn-text {
+    font-size: 14px;
+    color: #fff;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}

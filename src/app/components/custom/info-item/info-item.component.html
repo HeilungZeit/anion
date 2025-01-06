@@ -1,6 +1,6 @@
 <div class="info-item flex flex-column fz-16">
   <span class="info-title">{{ item().title }}</span>
-  <span class="info-value flex align-center gap-5">
+  <span class="flex align-center gap-5">
     @if (item().icon) {
     <tui-icon
       class="gray-svg"
@@ -9,6 +9,6 @@
       [icon]="item().icon"
     ></tui-icon>
     }
-    {{ item().value }}
+    <span class="info-value">{{ item().value }}</span>
   </span>
 </div>

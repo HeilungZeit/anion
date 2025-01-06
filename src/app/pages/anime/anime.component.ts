@@ -13,38 +13,17 @@ import { v4 } from 'uuid';
 import { ContentLayout } from '../../layouts/content/content.component';
 import { InfoItemComponent } from '../../components/custom/info-item/info-item.component';
 import { TabsComponent } from '../../components/custom/tabs/tabs.component';
-import { DescrComponent } from '../../components/custom/descr/descr.component';
-import { AnimePlayerComponent } from '../../components/custom/anime-player/anime-player.component';
+import { DescrComponent } from '../../components/custom/anime-page/descr/descr.component';
+import { AnimePlayerComponent } from '../../components/custom/anime-page/anime-player/anime-player.component';
 import { RemoveCharactersPipe } from '../../pipes/removeChars.pipe';
 import { ChipComponent } from '../../components/custom/chip/chip.component';
 import { RecommendationsComponent } from './components/recommendations/recommendations.component';
 
-import { InfoItemI } from './interfaces/types';
+import { AnimeDetailsI, InfoItemI } from '../../interfaces/anime.types';
 import { Subject, takeUntil } from 'rxjs';
-import { TuiTooltip } from '@taiga-ui/kit';
-import { TuiIcon } from '@taiga-ui/core';
-
-interface AnimeDetails {
-  episodes: { aired?: number; nextDate?: number; count?: number };
-  animeStatus: { title: string };
-  minAge: { titleLong: string };
-  rating: { average: number };
-  randomScreenshots: Array<{ sizes: { full: string } }>;
-  videos: any[];
-  fandubbers: any[];
-  genres: any[];
-  otherTitles: any[];
-  description: string;
-  year: number;
-  title: string;
-  poster: {
-    fullsize: string;
-    medium: string;
-    big: string;
-    huge: string;
-    small: string;
-  };
-}
+import { TuiElasticContainer, TuiTooltip } from '@taiga-ui/kit';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
+import { LineTileComponent } from '../../components/custom/anime-page/line-tile/line-tile.component';
 
 @Component({
   selector: 'app-anime',
@@ -59,8 +38,11 @@ interface AnimeDetails {
     RemoveCharactersPipe,
     ChipComponent,
     RecommendationsComponent,
+    LineTileComponent,
     TuiTooltip,
     TuiIcon,
+    TuiElasticContainer,
+    TuiButton,
   ],
   templateUrl: './anime.component.html',
   styleUrl: './anime.component.scss',
@@ -70,10 +52,13 @@ export class AnimeComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly destroy$ = new Subject<void>();
 
-  readonly animeDetails = signal<AnimeDetails>({} as AnimeDetails);
-  readonly tabIndex = signal(0);
   readonly tabs = ['Описание', 'Похожие аниме'];
+
+  readonly animeDetails = signal<AnimeDetailsI>({} as AnimeDetailsI);
+  readonly tabIndex = signal(0);
+
   pageId = signal(0);
+  isExpanded = signal(false);
 
   ngOnInit(): void {
     this.route.data
@@ -82,6 +67,7 @@ export class AnimeComponent implements OnInit {
         if (animeInfo?.['animeDetails']) {
           this.animeDetails.set(animeInfo['animeDetails']);
           this.tabIndex.set(0);
+          this.isExpanded.set(false);
         }
       });
 
@@ -93,6 +79,10 @@ export class AnimeComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  toggelExpand() {
+    this.isExpanded.update((prev) => !prev);
   }
 
   readonly infoItems = computed<InfoItemI[]>(() => {
@@ -153,7 +143,7 @@ export class AnimeComponent implements OnInit {
     if (diff <= 0) {
       return {
         date: formattedDate,
-        timeLeft: '(уже вышло)',
+        timeLeft: 'Уже вышло',
       };
     }
 
@@ -170,15 +160,5 @@ export class AnimeComponent implements OnInit {
       date: formattedDate,
       timeLeft,
     };
-  });
-
-  readonly screenshots = computed(() => {
-    const details = this.animeDetails();
-    if (!details?.randomScreenshots) return [];
-
-    return details.randomScreenshots.map((item) => ({
-      id: v4(),
-      original: item.sizes.full,
-    }));
   });
 }

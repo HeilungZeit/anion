@@ -1,0 +1,43 @@
+<div class="tile-container flex gap-20">
+  <a [routerLink]="['/anime', anime().animeId]">
+    <img
+      class="poster hover-scale"
+      [src]="anime().poster.big"
+      [alt]="anime().title"
+    />
+  </a>
+  <div class="flex flex-column gap-10">
+    <div class="flex flex-column gap-5">
+      <a [routerLink]="['/anime', anime().animeId]" class="title-link fz-18">{{
+        anime().title
+      }}</a>
+      <span class="fz-14 status-text">{{ anime().animeStatus.title }}</span>
+    </div>
+
+    <div class="flex">
+      <span class="adds fz-16">{{ anime().type.name }}</span>
+      <span class="separator"></span>
+      <span class="adds fz-16">{{ anime().year }}</span>
+
+      @if (anime().genres && anime().genres.length > 0) {
+      <span class="separator"></span>
+      <span class="adds fz-16">{{ anime().genres.join(", ") }}</span>
+      }
+    </div>
+    <div
+      class="status-text"
+      tuiHintAppearance="dark"
+      tuiHintDirection="bottom"
+      [tuiHint]="tooltip"
+    >
+      <tui-icon icon="@tui.eye" [style.color]="'var(--tui-status-neutral)'" />
+      <span class="ml-5">{{
+        anime().views || 0 | tuiFormatNumber | async
+      }}</span>
+
+      <ng-template #tooltip>
+        <span>Количество просмотров</span>
+      </ng-template>
+    </div>
+  </div>
+</div>

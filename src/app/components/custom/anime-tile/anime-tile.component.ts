@@ -9,6 +9,8 @@ import { TuiIcon } from '@taiga-ui/core';
 
 import { TruncatePipe } from '../../../pipes/truncate.pipe';
 import { ToFixedValuePipe } from '../../../pipes/toFixedValue.pipe';
+import { EpisodeDeclensionPipe } from '../../../pipes/episode-declension.pipe';
+import { AnimeDetailsI } from '../../../interfaces/anime.types';
 
 @Component({
   selector: 'ani-tile',
@@ -20,6 +22,7 @@ import { ToFixedValuePipe } from '../../../pipes/toFixedValue.pipe';
     RouterLink,
     RouterLinkActive,
     ToFixedValuePipe,
+    EpisodeDeclensionPipe,
   ],
   providers: [
     {
@@ -32,5 +35,5 @@ import { ToFixedValuePipe } from '../../../pipes/toFixedValue.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnimeTileComponent {
-  anime = input.required<any>();
+  anime = input.required<AnimeDetailsI>();
 }

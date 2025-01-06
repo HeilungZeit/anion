@@ -1,3 +1,23 @@
 <ani-content>
-  <p>catalog syka works!</p>
+  <h1 class="mt-15 ml-15">Список аниме</h1>
+
+  <div class="catalog-container flex gap-20">
+    <section class="catalog-list flex gap-10">
+      @defer (on timer(2000ms)) {
+        @for (anime of store.catalog.anime(); track anime.animeId; let isLast = $last) {
+          <ani-catalog-tile
+            [anime]="anime"
+            [id]="isLast ? 'lastItem' : ''"
+          ></ani-catalog-tile>
+        }
+      } @placeholder {
+        <div class="loader-container">
+          <ani-video-loader></ani-video-loader>
+        </div>
+      }
+    </section>
+    <section class="catalog-filters">
+      <ani-filter-panel></ani-filter-panel>
+    </section>
+  </div>
 </ani-content>

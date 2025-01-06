@@ -162,3 +162,15 @@
     background-color: var(--text-secondary);
   }
 }
+
+.order-watch-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.view-order-container {
+  background-color: rgb(149 155 164 / 14%);
+  padding: 8px 16px;
+  border-radius: 12px;
+}

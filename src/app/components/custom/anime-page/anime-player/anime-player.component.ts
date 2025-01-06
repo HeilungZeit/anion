@@ -104,29 +104,25 @@ export class AnimePlayerComponent implements OnInit {
     this.playersDataWithEpisodesCache()
   );
 
-  readonly dubberEpisodesCount = computed(() => {
+  readonly dubberEpisodesCount = (dubber: string) => {
     const counts = Object.keys(
-      this.playersDataWithEpisodesCache()[this.selectedDubber()]
+      this.playersDataWithEpisodesCache()[dubber]
     ).filter((key) => key.endsWith('-count'));
 
     const maxCount = Math.max(
       ...counts.map(
-        (count) =>
-          this.playersDataWithEpisodesCache()[this.selectedDubber()][count]
+        (count) => this.playersDataWithEpisodesCache()[dubber][count]
       )
     );
 
     return `(${maxCount} эп.)`;
-  });
+  };
 
-  readonly playerEpisodesCount = computed(() => {
-    const counts =
-      this.playersDataWithEpisodesCache()[this.selectedDubber()][
-        this.selectedPlayer()
-      ];
+  readonly playerEpisodesCount = (dubber: string, player: string) => {
+    const counts = this.playersDataWithEpisodesCache()[dubber][player];
 
     return `(${counts.length} эп.)`;
-  });
+  };
 
   readonly dubbersData = computed(() => this.getDubbersData(this.videos()));
 
@@ -172,6 +168,9 @@ export class AnimePlayerComponent implements OnInit {
       }
 
       const dubbingData = mapOfPlayers.get(video.data.dubbing);
+
+      if (video.data.player === 'Плеер Aksor') return;
+
       if (!dubbingData[video.data.player]) {
         dubbingData[video.data.player] = [];
       }

@@ -1,51 +1,41 @@
-<a [routerLink]="['/anime', anime().animeId]" routerLinkActive="active">
+<a class="link-wrap" [routerLink]="['/anime', anime().animeId]" routerLinkActive="active">
   <div class="wrapper">
     <div class="img-wrapper">
-        <img
-          width="200"
-          height="300"
-          class="main-image"
-          [ngSrc]="anime().poster['big']"
-          alt="cover image"
-          priority
-        />
-      <span
-        class="status"
-        [ngClass]="{
+      <img width="200" height="300" class="main-image" [ngSrc]="anime().poster['big']" alt="cover image" priority />
+      <span class="status" [ngClass]="{
           'status-anons': anime().animeStatus.alias === 'announcement',
           'status-ongoing': anime().animeStatus.alias === 'ongoing',
           'status-released': anime().animeStatus.alias === 'released',
-        }"
-        >{{ anime().animeStatus.title }}</span
-      >
+        }">{{ anime().animeStatus.title }}</span>
     </div>
-    <div class="score-wrap" >
+    <div class="score-wrap">
       <div class="flex align-center gap-5">
         <span class="fz-14">{{ anime().rating['average'] | toFixedValue }}</span>
-        <tui-icon
-          [style.height.px]="16"
-          [style.width.px]="16"
-          [style.fill]="'#ffc700'"
-          class="svg"
-          icon="@tui.star"
-        ></tui-icon>
+        <tui-icon [style.height.px]="16" [style.width.px]="16" [style.fill]="'#ffc700'" class="svg"
+          icon="@tui.star"></tui-icon>
       </div>
       @if (anime().type.shortname === 'ТВ') {
+
+      @let episodesText = anime().episodes | episodeDeclension;
+
+      @if (anime().animeStatus.alias === 'ongoing') {
       <div>
-        @if (anime().episodesAired) {
-          <span
-            >{{ anime().episodesAired }} из
-            {{ anime().episodes || 'TBD' }} эпизодов</span
-          >
+        @if (anime().episodes.aired) {
+        <span>{{ anime().episodes.aired }} из
+          {{ anime().episodes.count || 'TBD' }} {{ episodesText }}</span>
         }
       </div>
+      } @else {
+      <span>
+        {{ anime().episodes.count || 'TBD' }} {{ episodesText }}</span>
+      }
       }
     </div>
 
     <div class="name-wrap">
       <span class="name fz-14" [title]="anime().title">{{
         anime().title | truncate : 42 : true
-      }}</span>
+        }}</span>
     </div>
   </div>
 </a>

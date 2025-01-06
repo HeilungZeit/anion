@@ -1,11 +1,11 @@
 <div class="container">
-  @if (animes()) {
+  @if (animes() && !isLoading()) {
     @defer {
       @for (anime of animes(); track anime.animeId) {
         <ani-tile [anime]="anime" />
       }
     }
-    } @else {
+    } @else if (isLoading()) {
       @for (item of getArrayWithLength(); track $index) {
         <ani-tiles-skeleton />
       }

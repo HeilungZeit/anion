@@ -19,9 +19,9 @@ export class AxiosService {
     });
   }
 
-  async get(endpoint: string): Promise<any> {
+  async get(endpoint: string, params?: any): Promise<any> {
     try {
-      const response = await this.axiosInstance.get(endpoint);
+      const response = await this.axiosInstance.get(endpoint, { params });
       return response.data;
     } catch (error) {
       console.error('Error fetching data:', error);

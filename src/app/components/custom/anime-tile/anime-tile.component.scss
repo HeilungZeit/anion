@@ -4,6 +4,11 @@
     // filter: brightness(0.5) saturate(100%) grayscale(1) contrast(1);
 }
 
+.link-wrap {
+    min-height: 371px;
+    display: flex;
+}
+
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -20,6 +25,7 @@
 
 .img-wrapper {
     position: relative;
+    min-height: 300px;
 }
 
 .status {

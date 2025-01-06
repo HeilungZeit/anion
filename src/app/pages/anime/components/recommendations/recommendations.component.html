@@ -1,1 +1,6 @@
-<ani-list [animes]="recommendations()"></ani-list>
+@if (store.recommendations().length > 0 || store.isRecommendationsLoading()) {
+  <ani-list [animes]="store.recommendations()" [isLoading]="store.isRecommendationsLoading()"></ani-list>
+} @else {
+  <div class="fz-18 fw-600">Похожие аниме еще не добавлены</div>
+}
+

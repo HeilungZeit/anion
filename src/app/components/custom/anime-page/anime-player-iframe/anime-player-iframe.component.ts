@@ -44,8 +44,8 @@ export class PlayerIframeComponent {
         <head>
          <meta http-equiv="Content-Security-Policy" 
                 content="default-src 'self' ${baseUrl} 'unsafe-inline' 'unsafe-eval';
-                         frame-src ${baseUrl} https://player.aksor.pro/ https://*.video-lk-ok-ii.store/;
-                         connect-src ${baseUrl} https://img.yani.tv/ https://player.aksor.pro/ https://*.video-lk-ok-ii.store/;
+                         frame-src ${baseUrl} https://*.video-lk-ok-ii.store/;
+                         connect-src ${baseUrl} https://img.yani.tv/ https://*.video-lk-ok-ii.store/;
                          media-src ${baseUrl} https://*.video-lk-ok-ii.store/">
         </head>
         <body style="margin:0">

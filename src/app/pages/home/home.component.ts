@@ -22,7 +22,7 @@ export class HomeComponent {
     id: index,
   }));
 
-  async ngOnInit() {
+  ngOnInit() {
     this.store.getFeed();
   }
 }

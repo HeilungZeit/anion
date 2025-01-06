@@ -1,0 +1,133 @@
+<div>
+  <h3 class="header-panel fz-20 flex">Фильтры <tui-icon icon="@tui.sliders-horizontal" [style.color]="'var(--tui-status-neutral)'" /></h3>
+  <search tuiSearch>
+    <form [formGroup]="filterForm">
+      <fieldset tuiTextfieldSize="s">
+        <!-- <tui-textfield iconStart="@tui.search">
+          <input formControlName="search" placeholder="Поиск по названию" tuiTextfield />
+        </tui-textfield> -->
+
+        <label class="w-full" tuiLabel>
+          <span class="fz-14 fw-500">Выберите жанры</span>
+          <tui-multi-select
+            class="tui-space_top-2 w-full"
+            tuiTextfieldSize="m"
+            formControlName="genres"
+            [stringify]="stringifyGenres"
+            [editable]="true"
+            [tuiTextfieldCleaner]="true"
+            [tuiTextfieldLabelOutside]="true"
+            (searchChange)="onSearchGenres($event)"
+          >
+            Жанры
+            <tui-data-list-wrapper
+              *tuiDataList
+              tuiMultiSelectGroup
+              [itemContent]="stringifyGenresItems!"
+              [items]="genresToShow()"
+            />
+          </tui-multi-select>
+        </label>
+
+        <label class="w-full" tuiLabel>
+          <span class="fz-14 fw-500">Тип аниме</span>
+          <tui-multi-select
+            class="tui-space_top-2 w-full"
+            tuiTextfieldSize="m"
+            formControlName="type"
+            [stringify]="stringifyTypes"
+            [editable]="true"
+            [tuiTextfieldCleaner]="true"
+            [tuiTextfieldLabelOutside]="true"
+            (searchChange)="onSearchTypes($event)"
+          >
+            Типы
+            <tui-data-list-wrapper
+              *tuiDataList
+              tuiMultiSelectGroup
+              [itemContent]="stringifyTypesItems!"
+              [items]="typesToShow()"
+            />
+          </tui-multi-select>
+        </label>
+
+        <label class="w-full" tuiLabel>
+          <span class="fz-14 fw-500">Статус аниме</span>
+          <tui-multi-select
+            class="tui-space_top-2 w-full"
+            tuiTextfieldSize="m"
+            formControlName="status"
+            [stringify]="stringifyStatus"
+            [editable]="true"
+            [tuiTextfieldCleaner]="true"
+            [tuiTextfieldLabelOutside]="true"
+            (searchChange)="onSearchStatus($event)"
+          >
+            Выберите статус
+            <tui-data-list-wrapper
+              *tuiDataList
+              tuiMultiSelectGroup
+              [itemContent]="stringifyStatusItems!"
+              [items]="statusToShow()"
+            />
+          </tui-multi-select>
+        </label>
+
+        <div class="flex flex-column w-full">
+          <label class="w-full label-full" tuiLabel>
+            <span class="fz-14 fw-500">Год</span>
+            <div class="year-wrapper flex gap-10 w-full tui-space_top-2">
+              <tui-input-year
+                [min]="1965"
+                [max]="nextYear"
+                formControlName="yearFrom"
+                tuiTextfieldSize="m"
+                class="tui-space_bottom-2 w-full"
+              >
+                От
+              </tui-input-year>
+
+              <tui-input-year
+                [min]="1965"
+                [max]="nextYear"
+                formControlName="yearTo"
+                tuiTextfieldSize="m"
+                class="tui-space_bottom-2 w-full"
+              >
+                До
+              </tui-input-year>
+            </div>
+          </label>
+
+          <label class="w-full label-full" tuiLabel>
+            <span class="fz-14 fw-500">Сортировать по</span>
+            <tui-select
+              tuiTextfieldSize="m"
+              class="w-full tui-space_top-2"
+              formControlName="sort"
+              [stringify]="stringifySort"
+              [tuiTextfieldLabelOutside]="true"
+            >
+              <input tuiTextfieldLegacy />
+              <tui-data-list-wrapper
+                *tuiDataList
+                [itemContent]="stringifySortItems!"
+                [items]="sortToShow()"
+              />
+            </tui-select>
+          </label>
+        </div>
+      </fieldset>
+
+      <button
+        [loading]="store.catalog().isCatalogLoading"
+        size="m"
+        tuiButton
+        type="button"
+        (click)="onSubmit()"
+      >
+        <span class="btn-text">Поиск <tui-icon icon="@tui.search" [style.height.px]="16" [style.width.px]="16" [style.color]="'var(--tui-status-neutral)'" /></span>
+      </button>
+    </form>
+  </search>
+</div>

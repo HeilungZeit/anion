@@ -13,7 +13,7 @@
     </div>
 
     @defer {
-    <ani-list [animes]="store.feed().seasonAnime" />
+    <ani-list [animes]="store.feed().seasonAnime" [isLoading]="store.isLoading()" />
     }
 
 

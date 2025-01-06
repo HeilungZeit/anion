@@ -1,0 +1,25 @@
+.catalog-container {
+  padding: 25px 40px;
+}
+
+.catalog-list {
+  width: 82%;
+  height: fit-content;
+  flex-wrap: wrap;
+}
+
+.catalog-filters {
+  width: 18%;
+  height: fit-content;
+  padding: 10px;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 6px;
+  background-color: var(--tui-background-neutral-1);
+}
+
+.loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}

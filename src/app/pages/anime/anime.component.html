@@ -28,7 +28,9 @@
       <div class="main-content flex w-full flex-column">
         <div class="content-header flex flex-column">
           <div class="flex flex-column">
-            <span class="aired fz-16 fw-400">Аниме {{ animeDetails().year }}</span>
+            <span class="aired fz-16 fw-400"
+              >Аниме {{ animeDetails().year || '' }}</span
+            >
             <h1 class="title fw-500 mt-10">{{ animeDetails().title }}</h1>
           </div>
 
@@ -41,12 +43,18 @@
 
         <div class="divider"></div>
         <div class="tabs-wrapper mb-15">
-          <ani-tabs [tabs]="tabs" [pageId]="pageId()" (onTabChange)="tabIndex.set($event)"></ani-tabs>
+          <ani-tabs
+            [tabs]="tabs"
+            [pageId]="pageId()"
+            (onTabChange)="tabIndex.set($event)"
+          ></ani-tabs>
         </div>
 
         <div class="description-wrap">
           @if (tabIndex() === 0) {
-          <ani-descr [description]="animeDetails().description || '' | removeChars" />
+          <ani-descr
+            [description]="animeDetails().description || '' | removeChars"
+          />
 
           <div class="chip-wrapper">
             @for (genre of animeDetails().genres; track genre.id) {
@@ -56,7 +64,7 @@
 
           <div class="additional-data">
             <div class="alternative-names">
-              <span class="alt-title">Альтернативные названия:</span>
+              <span class="alt-title fw-600">Альтернативные названия:</span>
               <div>
                 @for (name of animeDetails().otherTitles; track name) {
                 <span class="alt-name">{{ name }}</span>
@@ -64,13 +72,14 @@
               </div>
             </div>
 
-            @if (animeDetails().episodes.nextDate) {
-              @let nextEpisode = getTimeDiffereceToNextEpisode();
+            @if (animeDetails().episodes.nextDate) { @let nextEpisode =
+            getTimeDiffereceToNextEpisode();
 
-              <div class="vertical-divider"></div>
+            <div class="vertical-divider"></div>
 
             <div>
-              <span class="alt-title">Следующий эпизод:
+              <span class="alt-title fw-600"
+                >Следующий эпизод:
                 <tui-icon
                   tuiHintDirection="top"
                   tuiTooltip="Дата выхода в Японии"
@@ -83,19 +92,40 @@
             </div>
             }
           </div>
-<!-- 
-          @if (getScreenshots.length) {
-          <div #screenshotsContainer class="mt-25">
-            <span class="fz-20 fw-600">Скриншоты</span>
-            <ani-image-slider [images]="getScreenshots"></ani-image-slider>
-          </div>
-          } -->
 
-          @defer (on immediate) {
-            <ani-player [videos]="animeDetails().videos"></ani-player>
-          }
-        } @else {
-          <app-recommendations></app-recommendations>
+          @if (animeDetails().viewingOrder.length > 0) {
+          <div class="view-order-container flex mt-20">
+            <tui-elastic-container>
+              <div class="order-watch-wrap">
+              <button
+                tuiButton
+                (click)="toggelExpand()"
+                appearance="flat"
+                [iconEnd]="
+                  isExpanded() ? '@tui.chevron-up' : '@tui.chevron-down'
+                "
+                size="s"
+                tuiButton
+                class="fz-18 fw-600 w-fit"
+              >
+                Порядок просмотра
+              </button>
+              @if (isExpanded()) {
+                @for (anime of animeDetails().viewingOrder; track anime.animeId) {
+                  <ani-line-tile [anime]="anime"></ani-line-tile>
+                }
+              }
+              </div>
+            </tui-elastic-container>
+          </div>
+          } @if (animeDetails().videos.length > 0) { @defer (on immediate) {
+          <ani-player [videos]="animeDetails().videos"></ani-player>
+          } } } @else {
+            @defer (on viewport) {
+              <app-recommendations></app-recommendations>
+            } @placeholder {
+              <div class="recommendations-placeholder"></div>
+            }
           }
         </div>
 

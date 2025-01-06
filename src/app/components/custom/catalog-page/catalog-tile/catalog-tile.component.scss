@@ -1,0 +1,55 @@
+@mixin pseudo-after {
+    &::after {
+        content: '/';
+        margin: 0 10px;
+        text-decoration: none !important;
+    }
+}
+
+.tile-container {
+    width: 355px;
+}
+
+.poster {
+    width: 100px;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hover-scale {
+    transition: transform 0.2s ease-in-out;
+    
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+.title-link {
+    &:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+    }
+}
+
+.status-text {
+    color: var(--tui-status-neutral);
+    text-transform: capitalize;
+    width: fit-content;
+    cursor: default;
+}
+
+.adds {
+    &:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+
+        &::after {
+            color: initial;
+            text-decoration: none;
+        }
+    }
+}
+
+.separator {
+    @include pseudo-after;
+}

@@ -1,0 +1,29 @@
+.line-wrapper {
+    width: fit-content;
+    border-color: var(--text-secondary);
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.aired {
+    color: var(--tui-text-positive);
+}
+
+.not-aired {
+    color: var(--tui-text-negative);
+}
+
+.line-image {
+    border-radius: 6px;
+    overflow: hidden;
+    object-fit: cover;
+}
+
+.line-title-text {
+    &::after {
+        content: ' — ';
+    }
+}
