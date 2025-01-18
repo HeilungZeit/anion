@@ -24,7 +24,7 @@
     "@angular/router": "^19.1.1",
     "@angular/ssr": "^19.1.2",
     "@maskito/angular": "3.2.0",
-    "@maskito/core": "3.2.0",
+    "@maskito/core": "3.2.1",
     "@maskito/kit": "3.2.0",
     "@maskito/phone": "3.2.0",
     "@ng-web-apis/common": "4.11.1",

@@ -1751,10 +1751,10 @@
   dependencies:
     tslib "2.8.0"
 
-"@maskito/core@3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@maskito/core/-/core-3.2.0.tgz#5da653b9538475cadf467a5a82c4d4b63cf1e201"
-  integrity sha512-c8GNwuz4PQmZqf5CSXIncwIkZSwBeU2FZtpBJtD21DaIe4uBQ541C0BncHMqEbLP2+n+HyFKEnT90m03BBlGrw==
+"@maskito/core@3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@maskito/core/-/core-3.2.1.tgz#4ef9adc0e9e7acb66bc08f53df55a9618068c2d6"
+  integrity sha512-gpoJbFFsq2CFz9smqEvZfTPVMt/gkRoiL14idL1sLXEDbWZyeKce0SgusHzHXaOkEegly4BIJGazCNG2hsPNYg==
 
 "@maskito/kit@3.2.0":
   version "3.2.0"
