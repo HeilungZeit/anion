@@ -39,12 +39,14 @@
   </div>
 
   <div class="episodes-wrapper">
-    @for (item of playersDataWithEpisodes()[selectedDubber()][selectedPlayer()]; track item.id) {
-      <div class="episode-item" [class.selected]="selectedEpisode()?.id === item.id" (click)="selectedEpisode.set(item)">
+    @for (item of playersDataWithEpisodes()[selectedDubber()]?.[selectedPlayer()] || []; track item.id) {
+      <div class="episode-item" [class.selected]="selectedEpisode()?.id === item.id" [class.watched]="isEpisodeWatched(item)" (click)="setSelectedEpisode(item)">
         {{ item.episode }}
       </div>
     }
   </div>
 
-  <ani-player-iframe [url]="selectedEpisode()?.iframeUrl ?? ''" />
+  <div class="player-wrapper w-full">
+    <ani-player-iframe [url]="selectedEpisode()?.iframeUrl ?? ''" />
+  </div>
 </div>

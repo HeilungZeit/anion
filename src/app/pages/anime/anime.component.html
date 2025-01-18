@@ -86,7 +86,7 @@
                 />
               </span>
               <div class="next-episode-wrapper mt-10">
-                <span class="alt-name fz-16">{{ nextEpisode?.date }}</span>
+                <span class="alt-name fz-16">{{ nextEpisode?.timeLeft !== 'Уже вышло' ? nextEpisode?.date : '' }}</span>
                 <span class="alt-name fz-16">{{ nextEpisode?.timeLeft }}</span>
               </div>
             </div>
@@ -119,7 +119,7 @@
             </tui-elastic-container>
           </div>
           } @if (animeDetails().videos.length > 0) { @defer (on immediate) {
-          <ani-player [videos]="animeDetails().videos"></ani-player>
+            <ani-player [videos]="animeDetails().videos" [animeId]="pageId()"></ani-player>
           } } } @else {
             @defer (on viewport) {
               <app-recommendations></app-recommendations>

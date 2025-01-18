@@ -1,0 +1,29 @@
+<ani-content>
+  <h1 class="mt-15 ml-15 mb-20">Поиск</h1>
+
+  <search class="search-wrapper" tuiSearch>
+    <form [formGroup]="searchForm">
+      <fieldset tuiTextfieldSize="m">
+        <tui-textfield iconStart="@tui.search">
+          <input formControlName="search" placeholder="Введите название..." tuiTextfield />
+        </tui-textfield>
+
+      </fieldset>
+    </form>
+  </search>
+
+  <section class="search-list flex gap-10">
+    @if (store.search().searchResults.length > 0) {
+      @for (anime of store.search().searchResults; track anime.animeId) {
+        <ani-catalog-tile
+          [anime]="anime"
+          [lastAnimeElement]="lastAnimeElement"
+        ></ani-catalog-tile>
+      }
+    } @else {
+      <div class="loader-container">
+        <ani-video-loader></ani-video-loader>
+      </div>
+    }
+  </section>
+</ani-content>

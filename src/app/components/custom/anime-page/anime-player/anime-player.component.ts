@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   effect,
+  inject,
   input,
   OnInit,
   signal,
@@ -12,6 +13,11 @@ import { FormsModule } from '@angular/forms';
 import { TuiDataList } from '@taiga-ui/core';
 import { TuiSelectModule } from '@taiga-ui/legacy';
 import { PlayerIframeComponent } from '../anime-player-iframe/anime-player-iframe.component';
+import {
+  IndexDbService,
+  WatchedEpisode,
+} from '../../../../services/indexDb/index-db.service';
+import { distinctUntilChanged, interval, map } from 'rxjs';
 
 interface Episode {
   episode: number;
@@ -44,17 +50,39 @@ interface VideoData {
 })
 export class AnimePlayerComponent implements OnInit {
   readonly videos = input<VideoData[]>([]);
+  readonly animeId = input.required<number>();
 
   selectedDubber = signal<string>('');
   selectedPlayer = signal<string>('');
   selectedEpisode = signal<Episode | null>(null);
+  indexDbWatchedEpisodes = signal<WatchedEpisode[]>([]);
+
+  protected indexDbService = inject(IndexDbService);
 
   constructor() {
+    interval(500)
+      .pipe(
+        map(() => this.indexDbService.checkDbInit()),
+        distinctUntilChanged()
+      )
+      .subscribe((isInitialized) => {
+        if (isInitialized) {
+          this.indexDbService
+            .getWatchedEpisodes(
+              this.animeId(),
+              this.selectedDubber(),
+              this.selectedPlayer()
+            )
+            .then((watchedEpisodes) => {
+              this.indexDbWatchedEpisodes.set(watchedEpisodes);
+            });
+        }
+      });
     effect(() => {
       const dubber = this.selectedDubber();
       if (dubber) {
-        const playersData = this.playersDataWithEpisodesCache()[dubber];
-        const firstPlayer = Object.keys(playersData).find(
+        const playersData = this.playersDataWithEpisodesCache()?.[dubber];
+        const firstPlayer = Object.keys(playersData || {}).find(
           (key) => !key.endsWith('-count')
         );
 
@@ -68,8 +96,25 @@ export class AnimePlayerComponent implements OnInit {
       const dubber = this.selectedDubber();
       const player = this.selectedPlayer();
       if (dubber && player) {
-        const playersData = this.playersDataWithEpisodesCache()[dubber];
-        this.selectedEpisode.set(playersData[player][0]);
+        const playersData = this.playersDataWithEpisodesCache()?.[dubber];
+        this.selectedEpisode.set(playersData?.[player]?.[0]);
+
+        this.indexDbService.markEpisodeAsWatched(
+          this.animeId(),
+          playersData?.[player]?.[0]?.episode || 1,
+          dubber,
+          player
+        );
+
+        this.indexDbService
+          .getWatchedEpisodes(
+            this.animeId(),
+            this.selectedDubber(),
+            this.selectedPlayer()
+          )
+          .then((watchedEpisodes) => {
+            this.indexDbWatchedEpisodes.set(watchedEpisodes);
+          });
       }
     });
   }
@@ -87,9 +132,51 @@ export class AnimePlayerComponent implements OnInit {
         )[0];
         this.selectedPlayer.set(firstPlayer);
 
-        this.selectedEpisode.set(playersData[firstPlayer][0]);
+        this.selectedEpisode.set(playersData?.[firstPlayer]?.[0]);
       }
     }
+  }
+
+  protected setSelectedEpisode(episode: Episode): void {
+    this.selectedEpisode.set(episode);
+
+    this.indexDbService.markEpisodeAsWatched(
+      this.animeId(),
+      episode.episode || 1,
+      this.selectedDubber(),
+      this.selectedPlayer()
+    );
+
+    this.indexDbService
+      .getWatchedEpisodes(
+        this.animeId(),
+        this.selectedDubber(),
+        this.selectedPlayer()
+      )
+      .then((watchedEpisodes) => {
+        this.indexDbWatchedEpisodes.set(watchedEpisodes);
+      });
+  }
+
+  private readonly watchedEpisodesMap = computed(() => {
+    const map = new Map<string, boolean>();
+    const watchedEpisodes = this.indexDbWatchedEpisodes();
+    const currentDubber = this.selectedDubber();
+    const currentPlayer = this.selectedPlayer();
+
+    watchedEpisodes.forEach((watchedEpisode) => {
+      const key = `${watchedEpisode.episode}_${currentDubber}_${currentPlayer}`;
+      map.set(key, true);
+    });
+
+    return map;
+  });
+
+  protected isEpisodeWatched(episode: Episode): boolean {
+    const key = `${
+      episode.episode
+    }_${this.selectedDubber()}_${this.selectedPlayer()}`;
+    return this.watchedEpisodesMap().has(key);
   }
 
   private readonly playersDataWithEpisodesCache = computed(() =>
@@ -106,8 +193,8 @@ export class AnimePlayerComponent implements OnInit {
 
   readonly dubberEpisodesCount = (dubber: string) => {
     const counts = Object.keys(
-      this.playersDataWithEpisodesCache()[dubber]
-    ).filter((key) => key.endsWith('-count'));
+      this.playersDataWithEpisodesCache()?.[dubber] || {}
+    )?.filter((key) => key.endsWith('-count'));
 
     const maxCount = Math.max(
       ...counts.map(
@@ -119,9 +206,9 @@ export class AnimePlayerComponent implements OnInit {
   };
 
   readonly playerEpisodesCount = (dubber: string, player: string) => {
-    const counts = this.playersDataWithEpisodesCache()[dubber][player];
+    const counts = this.playersDataWithEpisodesCache()?.[dubber]?.[player];
 
-    return `(${counts.length} эп.)`;
+    return `(${counts?.length || 0} эп.)`;
   };
 
   readonly dubbersData = computed(() => this.getDubbersData(this.videos()));
@@ -136,8 +223,10 @@ export class AnimePlayerComponent implements OnInit {
     });
 
     return {
-      dubbers: Array.from(mapOfDubbers.keys()).filter((dubber) =>
-        dubber.toLowerCase().startsWith('озвучка')
+      dubbers: Array.from(mapOfDubbers.keys()).filter(
+        (dubber) =>
+          dubber.toLowerCase().startsWith('озвучка') ||
+          !dubber.toLowerCase().startsWith('субтитры')
       ),
       subtitles: Array.from(mapOfDubbers.keys()).filter((dubber) =>
         dubber.toLowerCase().startsWith('субтитры')

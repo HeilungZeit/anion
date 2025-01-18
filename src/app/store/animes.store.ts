@@ -1,5 +1,5 @@
 import { signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
-import { effect, inject } from '@angular/core';
+import { inject } from '@angular/core';
 
 import {
   AnimeDetailsI,
@@ -28,6 +28,10 @@ export type AnimeState = {
     groups: GenreGroup[];
     isGenresLoading: boolean;
   };
+  search: {
+    searchResults: AnimeDetailsI[];
+    isSearchLoading: boolean;
+  };
   isLoading: boolean;
   recommendations: AnimeDetailsI[];
   isRecommendationsLoading: boolean;
@@ -47,6 +51,10 @@ const initialState: AnimeState = {
     haveMore: true,
     isCatalogLoading: false,
   },
+  search: {
+    searchResults: [],
+    isSearchLoading: false,
+  },
   isLoading: false,
   isRecommendationsLoading: false,
 };
@@ -58,10 +66,10 @@ export const AnimesStore = signalStore(
     createAnimeMethods(store, yumiService)
   ),
   withHooks({
-    onInit(store) {
-      effect(() => {
-        console.log(store.catalog().anime);
-      });
-    },
+    // onInit(store) {
+    // effect(() => {
+    //   console.log(store.catalog().anime);
+    // });
+    // },
   })
 );

@@ -17,10 +17,10 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'series',
-    title: 'Series  - Anion',
+    path: 'search',
+    title: 'Search  - Anion',
     loadComponent: () =>
-      import('../pages/series/series.component').then((m) => m.SeriesComponent),
+      import('../pages/search/search.component').then((m) => m.SearchComponent),
   },
   {
     path: 'anime/:id',

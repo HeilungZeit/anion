@@ -7,7 +7,8 @@
         @for (anime of store.catalog.anime(); track anime.animeId; let isLast = $last) {
           <ani-catalog-tile
             [anime]="anime"
-            [id]="isLast ? 'lastItem' : ''"
+            [lastAnimeElement]="lastAnimeElement"
+            [isLast]="isLast"
           ></ani-catalog-tile>
         }
       } @placeholder {

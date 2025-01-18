@@ -12,19 +12,19 @@ export class InfiniteScrollService {
 
   setupInfiniteScroll(
     targetElement: Element,
-    callback: () => void,
+    callback: () => Promise<void>,
     options: IntersectionObserverInit = {
       root: null,
       rootMargin: '0px',
       threshold: 0.7,
     }
   ): void {
-    this.observer = new IntersectionObserver((entries) => {
+    this.observer = new IntersectionObserver(async (entries) => {
       const [entry] = entries;
       if (entry.isIntersecting) {
         this.disconnect();
         this.loadingSubject.next(true);
-        callback();
+        await callback();
       }
     }, options);
 

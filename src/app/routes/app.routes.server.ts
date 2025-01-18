@@ -10,7 +10,7 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
-    path: 'series',
+    path: 'search',
     renderMode: RenderMode.Server,
   },
   {

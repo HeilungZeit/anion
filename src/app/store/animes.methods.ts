@@ -103,6 +103,29 @@ export const createAnimeMethods = (
       }
     },
 
+    async searchAnime(payload: {
+      search: string;
+      offset?: number;
+      limit?: number;
+    }): Promise<void> {
+      patchState(store, {
+        search: { ...store.search(), isSearchLoading: true },
+      });
+
+      try {
+        const searchResults = await yumiService.searchAnime(payload);
+
+        patchState(store, {
+          search: { searchResults, isSearchLoading: false },
+        });
+      } catch (error) {
+        console.error(error);
+        patchState(store, {
+          search: { ...store.search(), isSearchLoading: false },
+        });
+      }
+    },
+
     setCatalogQueryParams(
       query: AnimeQueryI,
       useReceivedQuery: boolean = false

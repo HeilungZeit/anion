@@ -1,11 +1,12 @@
 import {
-  AfterViewChecked,
   ChangeDetectionStrategy,
   Component,
+  effect,
   inject,
+  OnDestroy,
   OnInit,
+  signal,
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
 
 import { AnimesStore } from '../../store/animes.store';
 import { ContentLayout } from '../../layouts/content/content.component';
@@ -27,57 +28,44 @@ import { InfiniteScrollService } from '../../services/infinite-scroll.service';
   styleUrl: './catalog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CatalogComponent implements OnInit, AfterViewChecked {
-  protected lastAnimeElement: HTMLElement | null = null;
+export class CatalogComponent implements OnInit, OnDestroy {
+  protected lastAnimeElement = signal<HTMLElement | null>(null);
 
   readonly store = inject(AnimesStore);
   readonly infiniteScrollService = inject(InfiniteScrollService);
-  readonly document = inject(DOCUMENT);
+
+  constructor() {
+    effect(() => {
+      if (this.lastAnimeElement()) {
+        this.setupInfiniteScroll();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.store.getCatalog(DEFAULT_QUERY);
   }
 
-  ngAfterViewChecked(): void {
-    const newLastElement = this.document?.getElementById('lastItem');
-    // Если новый элемент существует
-    if (newLastElement) {
-      // Если последний элемент отличается от текущего или его нет в DOM
-      if (!this.lastAnimeElement || this.lastAnimeElement !== newLastElement) {
-        this.lastAnimeElement = newLastElement;
-        this.setupInfiniteScroll();
-      }
-    } else {
-      // Если новый элемент не найден, сбрасываем текущий
-      this.lastAnimeElement = null;
-    }
-  }
-
   private setupInfiniteScroll(): void {
-    if (this.lastAnimeElement) {
+    if (this.lastAnimeElement()) {
       this.infiniteScrollService.setupInfiniteScroll(
-        this.lastAnimeElement,
-        () => this.loadMoreAnime()
+        this.lastAnimeElement() as Element,
+        async () => await this.loadMoreAnime()
       );
     }
   }
 
-  private loadMoreAnime(): void {
-    this.infiniteScrollService.disconnect();
-
-    if (this.store.catalog().haveMore) {
-      this.store.getCatalog({
+  protected async loadMoreAnime(): Promise<void> {
+    if (
+      this.store.catalog().haveMore &&
+      !this.store.catalog().isCatalogLoading
+    ) {
+      await this.store.getCatalog({
         offset: this.store.catalog().query.offset + 20,
       });
     }
 
-    setTimeout(() => {
-      const newLastElement = this.document?.getElementById('lastItem');
-      if (newLastElement) {
-        this.lastAnimeElement = newLastElement;
-        this.setupInfiniteScroll();
-      }
-    }, 1000);
+    this.infiniteScrollService.disconnect();
   }
 
   ngOnDestroy(): void {

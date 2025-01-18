@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map, Subject, takeUntil } from 'rxjs';
 
@@ -11,7 +11,7 @@ import { AnimesStore } from '../../../../store/animes.store';
   templateUrl: './recommendations.component.html',
   styleUrl: './recommendations.component.scss',
 })
-export class RecommendationsComponent implements OnInit {
+export class RecommendationsComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   readonly store = inject(AnimesStore);
   private readonly destroy$ = new Subject<void>();

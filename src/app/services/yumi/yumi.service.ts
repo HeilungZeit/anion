@@ -51,4 +51,12 @@ export class YumiService {
   async getGenres(): Promise<GenresResponse> {
     return this.axiosService.get('/anime/genres');
   }
+
+  async searchAnime(payload: {
+    search: string;
+    offset?: number;
+    limit?: number;
+  }): Promise<any> {
+    return this.axiosService.post('/anime/search', payload);
+  }
 }

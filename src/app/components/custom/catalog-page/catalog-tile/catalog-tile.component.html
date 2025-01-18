@@ -1,4 +1,4 @@
-<div class="tile-container flex gap-20">
+<div class="tile-container flex gap-20" [lastItem]="isLast()">
   <a [routerLink]="['/anime', anime().animeId]">
     <img
       class="poster hover-scale"
@@ -8,8 +8,8 @@
   </a>
   <div class="flex flex-column gap-10">
     <div class="flex flex-column gap-5">
-      <a [routerLink]="['/anime', anime().animeId]" class="title-link fz-18">{{
-        anime().title
+      <a [routerLink]="['/anime', anime().animeId]" [title]="anime().title" class="title-link fz-18">{{
+        anime().title | truncate: 52 : true
       }}</a>
       <span class="fz-14 status-text">{{ anime().animeStatus.title }}</span>
     </div>
@@ -24,20 +24,28 @@
       <span class="adds fz-16">{{ anime().genres.join(", ") }}</span>
       }
     </div>
-    <div
-      class="status-text"
-      tuiHintAppearance="dark"
-      tuiHintDirection="bottom"
-      [tuiHint]="tooltip"
-    >
-      <tui-icon icon="@tui.eye" [style.color]="'var(--tui-status-neutral)'" />
-      <span class="ml-5">{{
-        anime().views || 0 | tuiFormatNumber | async
-      }}</span>
 
-      <ng-template #tooltip>
-        <span>Количество просмотров</span>
-      </ng-template>
+    <div class="flex gap-10 align-center">
+      <div
+        class="status-text"
+        tuiHintAppearance="dark"
+        tuiHintDirection="bottom"
+        [tuiHint]="tooltip"
+      >
+        <tui-icon icon="@tui.eye" [style.color]="'var(--tui-status-neutral)'" />
+        <span class="ml-5">{{
+          anime().views || 0 | tuiFormatNumber | async
+        }}</span>
+  
+        <ng-template #tooltip>
+          <span>Количество просмотров</span>
+        </ng-template>
+      </div>
+
+      <div class="flex align-center gap-5 h-full status-text">
+        <tui-icon icon="@tui.star" [style.width.px]="18" [style.height.px]="18" [style.color]="'var(--tui-status-neutral)'" />
+        <span>{{ anime().rating.average.toFixed(1)  }}</span>
+      </div>
     </div>
   </div>
 </div>

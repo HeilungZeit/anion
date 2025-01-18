@@ -38,7 +38,7 @@
   }
 }
 
-.selected {
+div.selected {
   background-color: var(--secondary-color);
   border-color: var(--secondary-color);
 
@@ -46,4 +46,17 @@
     background-color: var(--secondary-color);
     border-color: var(--secondary-color);
   }
+}
+
+.watched {
+  background-color: #636363;
+  border-color: #636363;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.player-wrapper {
+  height: 700px;
 }

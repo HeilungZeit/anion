@@ -2,12 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
+  OnDestroy,
   OnInit,
   signal,
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { v4 } from 'uuid';
 
 import { ContentLayout } from '../../layouts/content/content.component';
@@ -48,8 +51,9 @@ import { LineTileComponent } from '../../components/custom/anime-page/line-tile/
   styleUrl: './anime.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnimeComponent implements OnInit {
+export class AnimeComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private titleService = inject(Title);
   private readonly destroy$ = new Subject<void>();
 
   readonly tabs = ['Описание', 'Похожие аниме'];
@@ -59,6 +63,14 @@ export class AnimeComponent implements OnInit {
 
   pageId = signal(0);
   isExpanded = signal(false);
+
+  constructor() {
+    effect(() => {
+      if (this.animeDetails()) {
+        this.titleService.setTitle(`${this.animeDetails().title} - Anion`);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.route.data
