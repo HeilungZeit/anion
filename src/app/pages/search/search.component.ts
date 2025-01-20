@@ -39,7 +39,7 @@ export class SearchComponent {
       this.searchForm
         .get('search')
         ?.valueChanges.pipe(debounceTime(500))
-        .subscribe((value) => {
+        .subscribe((value: any) => {
           if (value) {
             this.store.searchAnime({
               search: value,
