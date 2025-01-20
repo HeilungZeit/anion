@@ -2446,10 +2446,10 @@
   dependencies:
     tslib ">=2.8.1"
 
-"@taiga-ui/i18n@4.17.0":
-  version "4.17.0"
-  resolved "https://registry.yarnpkg.com/@taiga-ui/i18n/-/i18n-4.17.0.tgz#6a7ba5191ccd596abdce2358215827e66c0df30b"
-  integrity sha512-5uV0u6bVKq5Il2xuEQzMtx15LSNRzxVIXhUQOY+Q3dPe3V2IaE9lSEjAaR+vEp1U7uFgo0lPc+S3A1BdkEMMsA==
+"@taiga-ui/i18n@4.20.0":
+  version "4.20.0"
+  resolved "https://registry.yarnpkg.com/@taiga-ui/i18n/-/i18n-4.20.0.tgz#7014d746262815b0904d33ea1f685edc3de21db9"
+  integrity sha512-NbDzXIQDSxY3HtMycoFsQ05O4VBpK1i+NdaSOCVE0K9xVqValzmcCPwtYjvMzDsTHOOmUuNgCOpChKhVHnhIJQ==
   dependencies:
     tslib ">=2.8.1"
 
