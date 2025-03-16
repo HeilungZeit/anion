@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   gap: 15px;
 }
 
@@ -15,13 +16,36 @@
 }
 
 .episodes-wrapper {
+  position: relative;
+  width: 100%;
+  max-height: 160px;
+  overflow-y: scroll !important;
+  box-sizing: border-box;
+  
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 10px;
+  align-content: flex-start;
+  
+  scrollbar-width: thin;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: #636363;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.551);
+  }
 }
 
 .episode-item {
-  font-size: 20px;
+  flex: 0 0 auto; /* запрещаем сжиматься/растягиваться */
+  font-size: 19px;
   border: 1px solid #636363;
   color: #fff;
   padding: 5px;
@@ -32,6 +56,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  margin-bottom: 5px;
 
   &:hover {
     background-color: #636363;

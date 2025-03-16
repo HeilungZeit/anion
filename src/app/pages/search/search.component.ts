@@ -8,14 +8,12 @@ import { ContentLayout } from '../../layouts/content/content.component';
 import { CatalogTileComponent } from '../../components/custom/catalog-page/catalog-tile/catalog-tile.component';
 import { AnimesStore } from '../../store/animes.store';
 import { debounceTime, Subscription } from 'rxjs';
-import { VideoLoaderComponent } from '../../components/ui/video-loader/video-loader.component';
 
 @Component({
   selector: 'ani-search',
   imports: [
     ContentLayout,
     CatalogTileComponent,
-    VideoLoaderComponent,
     ReactiveFormsModule,
     TuiDataListWrapper,
     TuiSearch,

@@ -17,7 +17,7 @@ import {
   IndexDbService,
   WatchedEpisode,
 } from '../../../../services/indexDb/index-db.service';
-import { distinctUntilChanged, interval, map } from 'rxjs';
+import { distinctUntilChanged, interval, map, takeWhile } from 'rxjs';
 
 interface Episode {
   episode: number;
@@ -63,21 +63,15 @@ export class AnimePlayerComponent implements OnInit {
     interval(500)
       .pipe(
         map(() => this.indexDbService.checkDbInit()),
-        distinctUntilChanged()
+        distinctUntilChanged(),
+        takeWhile((isInitialized) => !isInitialized, true)
       )
-      .subscribe((isInitialized) => {
+      .subscribe(async (isInitialized) => {
         if (isInitialized) {
-          this.indexDbService
-            .getWatchedEpisodes(
-              this.animeId(),
-              this.selectedDubber(),
-              this.selectedPlayer()
-            )
-            .then((watchedEpisodes) => {
-              this.indexDbWatchedEpisodes.set(watchedEpisodes);
-            });
+          await this.initializeLastWatchedEpisode();
         }
       });
+
     effect(() => {
       const dubber = this.selectedDubber();
       if (dubber) {
@@ -95,6 +89,7 @@ export class AnimePlayerComponent implements OnInit {
     effect(() => {
       const dubber = this.selectedDubber();
       const player = this.selectedPlayer();
+
       if (dubber && player) {
         const playersData = this.playersDataWithEpisodesCache()?.[dubber];
         this.selectedEpisode.set(playersData?.[player]?.[0]);
@@ -107,11 +102,7 @@ export class AnimePlayerComponent implements OnInit {
         );
 
         this.indexDbService
-          .getWatchedEpisodes(
-            this.animeId(),
-            this.selectedDubber(),
-            this.selectedPlayer()
-          )
+          .getWatchedEpisodes(this.animeId(), dubber, player)
           .then((watchedEpisodes) => {
             this.indexDbWatchedEpisodes.set(watchedEpisodes);
           });
@@ -124,17 +115,38 @@ export class AnimePlayerComponent implements OnInit {
       const dubbers = this.dubbersData().dubbers;
       if (dubbers.length > 0) {
         const firstDubber = dubbers[0];
+
         this.selectedDubber.set(firstDubber);
 
         const playersData = this.playersDataWithEpisodesCache()[firstDubber];
         const firstPlayer = Object.keys(playersData).filter(
           (key) => !key.endsWith('-count')
         )[0];
-        this.selectedPlayer.set(firstPlayer);
 
+        this.selectedPlayer.set(firstPlayer);
         this.selectedEpisode.set(playersData?.[firstPlayer]?.[0]);
       }
     }
+  }
+
+  private async initializeLastWatchedEpisode(): Promise<void> {
+    const lastWatchedEpisode =
+      (await this.indexDbService.getWatchedEpisodes(this.animeId())) || null;
+    const lastEpisodeLength = lastWatchedEpisode?.length || 0;
+
+    if (!lastWatchedEpisode) return;
+
+    const lastEpisodeData = lastWatchedEpisode[lastEpisodeLength - 1];
+    this.selectedDubber.set(lastEpisodeData.dubber);
+    this.selectedPlayer.set(lastEpisodeData.player);
+
+    const playersData =
+      this.playersDataWithEpisodesCache()[lastEpisodeData.dubber];
+    this.selectedEpisode.set(
+      playersData?.[lastEpisodeData.player]?.find(
+        (episode: Episode) => episode.episode === lastEpisodeData.episode
+      )
+    );
   }
 
   protected setSelectedEpisode(episode: Episode): void {
@@ -217,21 +229,26 @@ export class AnimePlayerComponent implements OnInit {
     dubbers: string[];
     subtitles: string[];
   } {
-    const mapOfDubbers = new Map<string, VideoData>();
-    videos.forEach((video) => {
-      mapOfDubbers.set(video.data.dubbing, video);
-    });
+    return videos.reduce(
+      (acc, { data: { dubbing } }) => {
+        const dubbingLower = dubbing.toLowerCase();
+        const isDubber =
+          dubbingLower.startsWith('озвучка') ||
+          !dubbingLower.startsWith('субтитры');
 
-    return {
-      dubbers: Array.from(mapOfDubbers.keys()).filter(
-        (dubber) =>
-          dubber.toLowerCase().startsWith('озвучка') ||
-          !dubber.toLowerCase().startsWith('субтитры')
-      ),
-      subtitles: Array.from(mapOfDubbers.keys()).filter((dubber) =>
-        dubber.toLowerCase().startsWith('субтитры')
-      ),
-    };
+        if (!acc.dubbersSet.has(dubbing)) {
+          (isDubber ? acc.dubbers : acc.subtitles).push(dubbing);
+          acc.dubbersSet.add(dubbing);
+        }
+
+        return acc;
+      },
+      {
+        dubbers: [] as any[],
+        subtitles: [] as any[],
+        dubbersSet: new Set<string>(),
+      }
+    );
   }
 
   private getPlayersData(videos: { [k: string]: any }) {
@@ -247,36 +264,35 @@ export class AnimePlayerComponent implements OnInit {
   }
 
   private getPlayersDataWithEpisodes(videos: VideoData[]) {
-    const mapOfPlayers = new Map<string, any>();
+    return videos.reduce((acc, video) => {
+      if (video.data.player === 'Плеер Aksor') return acc;
 
-    videos.forEach((video) => {
-      if (!mapOfPlayers.get(video.data.dubbing)) {
-        mapOfPlayers.set(video.data.dubbing, {
-          [`${video.data.player}-count`]: video.number,
-        });
+      const {
+        data: { dubbing, player },
+        number,
+        iframeUrl,
+        videoId,
+      } = video;
+
+      if (!acc[dubbing]) {
+        acc[dubbing] = { [`${player}-count`]: number };
       }
 
-      const dubbingData = mapOfPlayers.get(video.data.dubbing);
+      const dubbingData = acc[dubbing];
 
-      if (video.data.player === 'Плеер Aksor') return;
-
-      if (!dubbingData[video.data.player]) {
-        dubbingData[video.data.player] = [];
+      if (!dubbingData[player]) {
+        dubbingData[player] = [];
       }
 
-      dubbingData[video.data.player].push({
-        episode: video.number,
-        iframeUrl: video.iframeUrl,
-        id: video.videoId,
-      });
+      dubbingData[player].push({ episode: number, iframeUrl, id: videoId });
+      dubbingData[player].sort((a: any, b: any) => a.episode - b.episode);
 
-      const currentCount = dubbingData[`${video.data.player}-count`] || 0;
-      dubbingData[`${video.data.player}-count`] = Math.max(
-        currentCount,
-        video.number
+      dubbingData[`${player}-count`] = Math.max(
+        dubbingData[`${player}-count`] || 0,
+        number
       );
-    });
 
-    return Object.fromEntries(mapOfPlayers);
+      return acc;
+    }, {} as Record<string, any>);
   }
 }
