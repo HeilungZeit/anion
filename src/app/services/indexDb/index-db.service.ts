@@ -25,7 +25,7 @@ export class IndexDbService {
     const request = indexedDB.open(this.dbName, this.dbVersion);
 
     request.onerror = (event) => {
-      console.error('Ошибка открытия БД:', event);
+      console.warn('Ошибка открытия БД:', event);
     };
 
     request.onsuccess = (event) => {

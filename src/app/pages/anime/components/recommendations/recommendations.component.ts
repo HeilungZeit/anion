@@ -17,13 +17,19 @@ export class RecommendationsComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    if (!this.store.recommendations().length) {
-      const id = this.route.params.pipe(map((params) => params['id']));
-
-      id.pipe(takeUntil(this.destroy$)).subscribe((id) => {
-        this.store.getRecommendations(+id);
+    this.route.params
+      .pipe(
+        map((params) => params['id']),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((id) => {
+        if (
+          !this.store.recommendations().list.length ||
+          this.store.recommendations().recommendationsFor !== id.toString()
+        ) {
+          this.store.getRecommendations(+id);
+        }
       });
-    }
   }
 
   ngOnDestroy(): void {

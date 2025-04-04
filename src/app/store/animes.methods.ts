@@ -38,7 +38,10 @@ export const createAnimeMethods = (
       try {
         const recommendations = await yumiService.getRecommendations(id);
         patchState(store, {
-          recommendations,
+          recommendations: {
+            list: recommendations,
+            recommendationsFor: id.toString(),
+          },
           isRecommendationsLoading: false,
         });
       } catch (error) {

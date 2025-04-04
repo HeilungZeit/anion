@@ -33,7 +33,10 @@ export type AnimeState = {
     isSearchLoading: boolean;
   };
   isLoading: boolean;
-  recommendations: AnimeDetailsI[];
+  recommendations: {
+    list: AnimeDetailsI[];
+    recommendationsFor: string;
+  };
   isRecommendationsLoading: boolean;
 };
 
@@ -44,7 +47,7 @@ const initialState: AnimeState = {
     updates: [],
   },
   genres: { genres: [], groups: [], isGenresLoading: false },
-  recommendations: [],
+  recommendations: { list: [], recommendationsFor: '' },
   catalog: {
     anime: [] as AnimeDetailsI[],
     query: DEFAULT_QUERY,

@@ -59,13 +59,14 @@ export class AnimePlayerComponent implements OnInit {
   selectedPlayer = signal<string>('');
   selectedEpisode = signal<Episode | null>(null);
   indexDbWatchedEpisodes = signal<WatchedEpisode[]>([]);
+  indexDbInitialized = signal<boolean>(false);
 
   episodesWrapper = viewChild<ElementRef>('episodesWrapper');
 
   protected indexDbService = inject(IndexDbService);
 
   constructor() {
-    interval(500)
+    interval(400)
       .pipe(
         map(() => this.indexDbService.checkDbInit()),
         distinctUntilChanged(),
@@ -74,6 +75,7 @@ export class AnimePlayerComponent implements OnInit {
       .subscribe(async (isInitialized) => {
         if (isInitialized) {
           await this.initializeLastWatchedEpisode();
+          this.indexDbInitialized.set(true);
         }
       });
 
@@ -105,12 +107,21 @@ export class AnimePlayerComponent implements OnInit {
           dubber,
           player
         );
+      }
+    });
 
-        this.indexDbService
-          .getWatchedEpisodes(this.animeId(), dubber, player)
-          .then((watchedEpisodes) => {
-            this.indexDbWatchedEpisodes.set(watchedEpisodes);
-          });
+    effect(async () => {
+      const dubber = this.selectedDubber();
+      const player = this.selectedPlayer();
+
+      if (this.indexDbInitialized()) {
+        const watchedEpisodes = await this.indexDbService.getWatchedEpisodes(
+          this.animeId(),
+          dubber,
+          player
+        );
+
+        this.indexDbWatchedEpisodes.set(watchedEpisodes);
       }
     });
   }
