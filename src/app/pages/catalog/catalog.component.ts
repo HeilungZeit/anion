@@ -50,18 +50,19 @@ export class CatalogComponent implements OnInit, OnDestroy {
     if (this.lastAnimeElement()) {
       this.infiniteScrollService.setupInfiniteScroll(
         this.lastAnimeElement() as Element,
-        async () => await this.loadMoreAnime()
+        this.loadMoreAnime.bind(this)
       );
     }
   }
 
-  protected async loadMoreAnime(): Promise<void> {
+  async loadMoreAnime(): Promise<void> {
     if (
       this.store.catalog().haveMore &&
       !this.store.catalog().isCatalogLoading
     ) {
       await this.store.getCatalog({
-        offset: this.store.catalog().query.offset + 20,
+        offset: this.store.catalog().query.offset + 22,
+        limit: 22,
       });
     }
 

@@ -49,21 +49,26 @@ export const createAnimeMethods = (
 
     async getCatalog(
       query: AnimeQueryI,
-      replaceList: boolean = false,
-      useReceivedQuery: boolean = false
+      isNewList: boolean = false
     ): Promise<void> {
       patchState(store, {
         catalog: { ...store.catalog(), isCatalogLoading: true },
       });
 
-      this.setCatalogQueryParams(query, useReceivedQuery);
+      this.setCatalogQueryParams(query, isNewList);
 
       try {
         const list: AnimeDetailsI[] = await yumiService.getAnimeWithQuery(
-          useReceivedQuery ? query : store.catalog().query
+          isNewList ? query : store.catalog().query
         );
 
-        if (list.length < 20) {
+        if (isNewList) {
+          patchState(store, {
+            catalog: { ...store.catalog(), haveMore: true },
+          });
+        }
+
+        if (list.length === 0) {
           patchState(store, {
             catalog: { ...store.catalog(), haveMore: false },
           });
@@ -72,7 +77,7 @@ export const createAnimeMethods = (
         patchState(store, {
           catalog: {
             ...store.catalog(),
-            anime: replaceList ? list : [...store.catalog().anime, ...list],
+            anime: isNewList ? list : [...store.catalog().anime, ...list],
             isCatalogLoading: false,
           },
         });

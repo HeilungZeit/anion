@@ -151,8 +151,9 @@ export class FilterPanelComponent implements OnInit {
       sort: this.filterForm.value.sort?.value,
       sortForward: false,
       offset: 0,
+      limit: 22,
     };
 
-    this.store.getCatalog(query, true, true);
+    this.store.getCatalog(query, true);
   };
 }

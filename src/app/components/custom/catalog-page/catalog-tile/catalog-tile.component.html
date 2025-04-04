@@ -14,14 +14,15 @@
       <span class="fz-14 status-text">{{ anime().animeStatus.title }}</span>
     </div>
 
-    <div class="flex">
-      <span class="adds fz-16">{{ anime().type.name }}</span>
-      <span class="separator"></span>
-      <span class="adds fz-16">{{ anime().year }}</span>
+    <div class="flex flex-column">
+      <div class="flex mb-10">
+        <span class="adds fz-16">{{ anime().type.name }}</span>
+        <span class="separator"></span>
+        <span class="adds fz-16">{{ anime().year }}</span>
+      </div>
 
       @if (anime().genres && anime().genres.length > 0) {
-      <span class="separator"></span>
-      <span class="adds fz-16">{{ anime().genres.join(", ") }}</span>
+      <span class="adds fz-16">{{ genres | truncate: 30 }}</span>
       }
     </div>
 

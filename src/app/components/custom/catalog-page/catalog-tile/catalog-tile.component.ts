@@ -55,4 +55,10 @@ export class CatalogTileComponent implements OnInit {
       this.lastAnimeElement().set(this.lastItemId()?.nativeElement);
     }
   }
+
+  get genres(): string {
+    return this.anime()
+      .genres.map((genre) => genre.title)
+      .join(', ');
+  }
 }

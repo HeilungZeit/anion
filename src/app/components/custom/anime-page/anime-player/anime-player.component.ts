@@ -4,10 +4,12 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
   input,
   OnInit,
   signal,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiDataList } from '@taiga-ui/core';
@@ -46,6 +48,7 @@ interface VideoData {
   ],
   templateUrl: './anime-player.component.html',
   styleUrl: './anime-player.component.scss',
+
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnimePlayerComponent implements OnInit {
@@ -56,6 +59,8 @@ export class AnimePlayerComponent implements OnInit {
   selectedPlayer = signal<string>('');
   selectedEpisode = signal<Episode | null>(null);
   indexDbWatchedEpisodes = signal<WatchedEpisode[]>([]);
+
+  episodesWrapper = viewChild<ElementRef>('episodesWrapper');
 
   protected indexDbService = inject(IndexDbService);
 
@@ -127,6 +132,75 @@ export class AnimePlayerComponent implements OnInit {
         this.selectedEpisode.set(playersData?.[firstPlayer]?.[0]);
       }
     }
+  }
+
+  ngAfterViewInit() {
+    this.episodesWrapper()?.nativeElement.addEventListener(
+      'wheel',
+      (event: { preventDefault: () => void; deltaY: number }) => {
+        event.preventDefault();
+        const element = this.episodesWrapper()?.nativeElement;
+        if (element) {
+          element.scrollTop += event.deltaY;
+        }
+      },
+      { passive: false }
+    );
+
+    // Обработчик для тачпада
+    this.episodesWrapper()?.nativeElement.addEventListener(
+      'touchstart',
+      (event: TouchEvent) => {
+        console.log('xyu');
+        const startY = event.touches[0].clientY;
+        let lastY = startY;
+
+        const touchMoveHandler = (moveEvent: TouchEvent) => {
+          const currentY = moveEvent.touches[0].clientY;
+          const deltaY = lastY - currentY;
+          lastY = currentY;
+
+          const element = this.episodesWrapper()?.nativeElement;
+          if (element) {
+            element.scrollTop += deltaY;
+          }
+
+          moveEvent.preventDefault();
+        };
+
+        const touchEndHandler = () => {
+          document.removeEventListener('touchmove', touchMoveHandler as any);
+          document.removeEventListener('touchend', touchEndHandler);
+        };
+
+        document.addEventListener('touchmove', touchMoveHandler as any, {
+          passive: false,
+        });
+        document.addEventListener('touchend', touchEndHandler);
+      },
+      { passive: true }
+    );
+
+    // Обработчик для trackpad в macOS
+    this.episodesWrapper()?.nativeElement.addEventListener(
+      'gesturestart',
+      (event: any) => {
+        event.preventDefault();
+      },
+      { passive: false }
+    );
+
+    this.episodesWrapper()?.nativeElement.addEventListener(
+      'gesturechange',
+      (event: any) => {
+        const element = this.episodesWrapper()?.nativeElement;
+        if (element) {
+          element.scrollTop += event.deltaY || event.dy || 0;
+        }
+        event.preventDefault();
+      },
+      { passive: false }
+    );
   }
 
   private async initializeLastWatchedEpisode(): Promise<void> {

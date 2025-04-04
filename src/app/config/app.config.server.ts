@@ -1,4 +1,8 @@
-import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
+import {
+  mergeApplicationConfig,
+  ApplicationConfig,
+  PLATFORM_ID,
+} from '@angular/core';
 import { provideServerRoutesConfig } from '@angular/ssr';
 import { provideServerRendering } from '@angular/platform-server';
 
@@ -11,6 +15,10 @@ const serverConfig: ApplicationConfig = {
     provideServerRendering(),
     provideServerRoutesConfig(serverRoutes),
     UNIVERSAL_PROVIDERS,
+    {
+      provide: PLATFORM_ID,
+      useValue: 'server',
+    },
   ],
 };
 

@@ -4,6 +4,8 @@
   width: 100%;
   height: 100%;
   gap: 15px;
+  position: relative;
+  pointer-events: auto;
 }
 
 .select-wrapper {
@@ -17,30 +19,50 @@
 
 .episodes-wrapper {
   position: relative;
-  width: 100%;
-  max-height: 160px;
-  overflow-y: scroll !important;
+  width: 97%;
+  max-height: 200px;
+  overflow-y: scroll;
   box-sizing: border-box;
+
+  scroll-behavior: smooth;
+
+  position: relative;
+  pointer-events: auto !important;
+
+  &:focus {
+    outline: none;
+  }
   
+  /* Приоритет обработки событий скролла */
+  touch-action: pan-y;
+  
+  /* Важно для событий скролла на macOS */
+  will-change: scroll-position;
+  
+  /* Принудительное создание нового контекста прокрутки */
+  transform: translateZ(0);
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    display: block;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #666;
+    border-radius: 4px;
+  }
+  
+  /* Специальные флаги для принудительного рендеринга скролла */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  
+  /* Создаём новый контекст наложения */
+  isolation: isolate;
+  z-index: 1;
+
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   align-content: flex-start;
-  
-  scrollbar-width: thin;
-  
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background-color: #636363;
-    border-radius: 4px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background-color: rgba(255, 255, 255, 0.551);
-  }
 }
 
 .episode-item {

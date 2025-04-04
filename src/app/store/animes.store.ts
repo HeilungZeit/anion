@@ -1,4 +1,4 @@
-import { signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
+import { signalStore, withMethods, withState } from '@ngrx/signals';
 import { inject } from '@angular/core';
 
 import {
@@ -64,12 +64,12 @@ export const AnimesStore = signalStore(
   withState<AnimeState>(initialState),
   withMethods((store, yumiService = inject(YumiService)) =>
     createAnimeMethods(store, yumiService)
-  ),
-  withHooks({
-    // onInit(store) {
-    // effect(() => {
-    //   console.log(store.catalog().anime);
-    // });
-    // },
-  })
+  )
+  // withHooks({
+  // onInit(store) {
+  // effect(() => {
+  //   console.log(store.catalog().anime);
+  // });
+  // },
+  // })
 );

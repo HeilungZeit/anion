@@ -7,7 +7,7 @@ export interface AnimeDetailsI {
   randomScreenshots: Array<{ sizes: { full: string; medium: string } }>;
   videos: any[];
   fandubbers: any[];
-  genres: any[];
+  genres: GenreI[];
   otherTitles: string[];
   description: string;
   year: number;
@@ -16,6 +16,12 @@ export interface AnimeDetailsI {
   poster: AnimePosterI;
   type: AnimeTypeI;
   views?: number;
+}
+
+export interface GenreI {
+  id: number;
+  title: string;
+  alias: string;
 }
 
 export interface AnimeEpisodesI {

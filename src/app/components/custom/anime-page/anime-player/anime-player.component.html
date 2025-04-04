@@ -38,7 +38,7 @@
     </tui-select>
   </div>
 
-  <div class="episodes-wrapper">
+  <div class="episodes-wrapper" #episodesWrapper>
     @for (item of playersDataWithEpisodes()[selectedDubber()]?.[selectedPlayer()] || []; track item.id) {
       <div class="episode-item" [class.selected]="selectedEpisode()?.id === item.id" [class.watched]="isEpisodeWatched(item)" (click)="setSelectedEpisode(item)">
         {{ item.episode }}
