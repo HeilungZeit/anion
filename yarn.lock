@@ -1354,10 +1354,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@ng-web-apis/mutation-observer@4.11.1":
-  version "4.11.1"
-  resolved "https://registry.yarnpkg.com/@ng-web-apis/mutation-observer/-/mutation-observer-4.11.1.tgz#804cecfe84a3a00dfd3b2f640108ad5aa8a2f3c7"
-  integrity sha512-YFnkGFE0gd03q4HBJL+WPl3YZRZNq7dVV8yD5uqr0ZCDgmOAMBilrp42FuHBPaYkF73Rs2EpKsKHWz1jASqBbQ==
+"@ng-web-apis/mutation-observer@4.12.1":
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/@ng-web-apis/mutation-observer/-/mutation-observer-4.12.0.tgz#d46daa021f3eaac11cc5cff5c219c049ff3e8da0"
+  integrity sha512-Yyz0jpQoGgWzQEhjRH8xC9Umxr2W0hYktuYDNxrmnr6GnBejcfkE+wCon7FhCt6h7BrqR3+Z4cg7TvnyUVHU6Q==
   dependencies:
     tslib "^2.3.0"
 
@@ -1923,10 +1923,10 @@
   dependencies:
     tslib ">=2.8.1"
 
-"@taiga-ui/cdk@^4.20.0":
-  version "4.31.0"
-  resolved "https://registry.yarnpkg.com/@taiga-ui/cdk/-/cdk-4.31.0.tgz#07374cd537f96b076b4f672033d7d4dd039b3ea4"
-  integrity sha512-Dz7PgOP56x2AgLyJmPamXus2wvSkrXP8O5BEKRVpJtUJgSiGb+7AsRRWYV4hdmCfBa/ON3iZAZGCezEbIcZD4A==
+"@taiga-ui/cdk@4.48.0":
+  version "4.48.0"
+  resolved "https://registry.yarnpkg.com/@taiga-ui/cdk/-/cdk-4.48.0.tgz#c23b1de89b68a9a656b2fea0b7b0113ac3e4dddc"
+  integrity sha512-CJdGnLqOmQsLTXDhliriVpvyjTCZNXtfqMpoBBNQwUdRC+2+0mhhltnmE2FnnyvsKYoFoZ87q1NpKkRqotvstA==
   dependencies:
     tslib "2.8.1"
   optionalDependencies:
@@ -1934,12 +1934,12 @@
     "@angular-devkit/schematics" ">=16.0.0"
     "@schematics/angular" ">=16.0.0"
     ng-morph "^4.8.4"
-    parse5 ">=7.2.1"
+    parse5 "^7.3.0"
 
-"@taiga-ui/core@^4.20.0":
-  version "4.31.0"
-  resolved "https://registry.yarnpkg.com/@taiga-ui/core/-/core-4.31.0.tgz#8628e50b4f37e7b3ac2f3aad796447d44c4768b0"
-  integrity sha512-1LJm8HycciG+C/Sn9fWrnOTwGp/Ahjr5Ca+ZDFbZ3FVbvn4a3ji8ZlBa6Rs80KUMKj7HNThq+YRE5ITzP7H1AA==
+"@taiga-ui/core@4.48.0":
+  version "4.48.0"
+  resolved "https://registry.yarnpkg.com/@taiga-ui/core/-/core-4.48.0.tgz#3e540e823001e454576ef4b446bfd676afb0f9b8"
+  integrity sha512-PkPN4gS1Wnf1nB1e0D9kB+wc6GMndjyAZvxntduG1UKGyFAl4rohbAJI5Fh5bjm/Gr4mQUUBX1LzeQFDY+ob6Q==
   dependencies:
     tslib ">=2.8.1"
 
@@ -1964,31 +1964,31 @@
   dependencies:
     tslib ">=2.8.1"
 
-"@taiga-ui/i18n@4.20.0":
-  version "4.20.0"
-  resolved "https://registry.yarnpkg.com/@taiga-ui/i18n/-/i18n-4.20.0.tgz#7014d746262815b0904d33ea1f685edc3de21db9"
-  integrity sha512-NbDzXIQDSxY3HtMycoFsQ05O4VBpK1i+NdaSOCVE0K9xVqValzmcCPwtYjvMzDsTHOOmUuNgCOpChKhVHnhIJQ==
+"@taiga-ui/i18n@4.48.0":
+  version "4.48.0"
+  resolved "https://registry.yarnpkg.com/@taiga-ui/i18n/-/i18n-4.48.0.tgz#9899b7e6e29282f4592b723210d3cf2ef280cd3b"
+  integrity sha512-E73l8P1YPFSydgDmz0ajn856ee7eDVIJosrgX3vpaAH1m2pICp4PYwZfqCuHwhogk/mKdAtnVZoBaOgr6ybXlg==
   dependencies:
     tslib ">=2.8.1"
 
-"@taiga-ui/icons-material@^4.5.0":
-  version "4.31.0"
-  resolved "https://registry.yarnpkg.com/@taiga-ui/icons-material/-/icons-material-4.31.0.tgz#ec869e32dd86a8b387d44d8b3b4a9755139484bf"
-  integrity sha512-a5rHUI9ym8pRq6rDNG3VKSfozO7ace4yx/xexiqjHadpKuQi5fjLUVQqoMrVGxS4dJybXuMufuHHn1dq61fLCA==
+"@taiga-ui/icons-material@4.48.0":
+  version "4.48.0"
+  resolved "https://registry.yarnpkg.com/@taiga-ui/icons-material/-/icons-material-4.48.0.tgz#f5433eaa1bd0cf5e65553b70d7f219175323394d"
+  integrity sha512-nkSgqw0KBMYlvHK98w6vxst6srvZwPmprmoRREy2kyG8xl5lgokwOefohdRHb2JZOmiLVwbVgEo0o+nFOZLPHQ==
   dependencies:
     tslib "^2.3.0"
 
-"@taiga-ui/icons@4.20.0":
-  version "4.20.0"
-  resolved "https://registry.yarnpkg.com/@taiga-ui/icons/-/icons-4.20.0.tgz#0e76b67d86b5ee018e2fcb5c01d9a45d3905b0f3"
-  integrity sha512-hdmqdXduwlTa5LaiKss+aUExRC8LOKAe8KEsT32LM8rbPCKOtki2Vxjy8ZwlQHpKn2c0DtvdSxyeW3w+drXg5A==
+"@taiga-ui/icons@4.48.0":
+  version "4.48.0"
+  resolved "https://registry.yarnpkg.com/@taiga-ui/icons/-/icons-4.48.0.tgz#e54f946591b7d1385ead0c9a8f4b28deed813233"
+  integrity sha512-TCWAQ2RshcBwgumk7UayYuDwpNQCwP6bDppsn3yz/JcKH1OagDPcLRy3oV15Gpwvi0AcrnrfE74IkeMdClMQUQ==
   dependencies:
     tslib "^2.3.0"
 
-"@taiga-ui/kit@^4.20.0":
-  version "4.31.0"
-  resolved "https://registry.yarnpkg.com/@taiga-ui/kit/-/kit-4.31.0.tgz#71de1f9baa29d148ccdc46c0579bcfdd4a40b9cc"
-  integrity sha512-Vub4AyHX9a2DSjwd9gPCcyIt7xdeEM32QV2HUJEQZbrzGHEuNkKgVZfSIPhIgDBjf/EyWPNKpeoawB8jSyLXAQ==
+"@taiga-ui/kit@4.48.0":
+  version "4.48.0"
+  resolved "https://registry.yarnpkg.com/@taiga-ui/kit/-/kit-4.48.0.tgz#b1246ffd71bb2bbe48953f6770ca2d02a93f416a"
+  integrity sha512-OraV1GAZqmBYwqTrsJPGar6d3Vo0keUhCGzd8rUxeL0ZKtRX+vsRRPtKAQP7B8IYPxnkZRQLZuV1XLZqmwEiaw==
   dependencies:
     tslib ">=2.8.1"
 
@@ -4825,12 +4825,19 @@ parse5-sax-parser@^7.0.0:
   dependencies:
     parse5 "^7.0.0"
 
-parse5@>=7.2.1, parse5@^7.0.0, parse5@^7.1.2:
+parse5@^7.0.0, parse5@^7.1.2:
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/parse5/-/parse5-7.2.1.tgz#8928f55915e6125f430cc44309765bf17556a33a"
   integrity sha512-BuBYQYlv1ckiPdQi/ohiivi9Sagc9JG+Ozs0r7b/0iK3sKmrb0b9FdWdBbOdx6hBCM/F9Ir82ofnBhtZOjCRPQ==
   dependencies:
     entities "^4.5.0"
+
+parse5@^7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/parse5/-/parse5-7.3.0.tgz#d7e224fa72399c7a175099f45fc2ad024b05ec05"
+  integrity sha512-IInvU7fabl34qmi9gY8XOVxhYyMyuH2xUNpb2q8/Y+7552KlejkRvqvD19nMoUW/uQGGbqNpA6Tufu5FL5BZgw==
+  dependencies:
+    entities "^6.0.0"
 
 parseurl@^1.3.3, parseurl@~1.3.2, parseurl@~1.3.3:
   version "1.3.3"
