@@ -1909,10 +1909,10 @@
   dependencies:
     tslib ">=2.8.1"
 
-"@taiga-ui/addon-preview@^3.90.0":
-  version "3.110.0"
-  resolved "https://registry.yarnpkg.com/@taiga-ui/addon-preview/-/addon-preview-3.110.0.tgz#c4c859102a1ee1109a16987fbe4b18f00d4d2249"
-  integrity sha512-SVqtM0h+OdpOlx7FltAqZPYdF1TNQclUdYi6y6GNZj84Z+LyUZA5phPnPuJFAa2jqQH1Zl04avpWm3ZehBnJ1A==
+"@taiga-ui/addon-preview@^3.117.0":
+  version "3.117.0"
+  resolved "https://registry.yarnpkg.com/@taiga-ui/addon-preview/-/addon-preview-3.117.0.tgz#17d5d39c6f2fd169f3401ef864d2568a81cb91d0"
+  integrity sha512-uBY+vu2qBXaUJTscuP2ai3pmeFdUhG65xO49XlIO/B4URBFJQFsnDWZTA2Z5m8Jt0nIO2sAwEWGWyZ6UGv358A==
   dependencies:
     tslib ">=2.7.0"
 
