@@ -34,8 +34,29 @@ app.use(
     maxAge: '1y',
     index: false,
     redirect: false,
-  }),
+  })
 );
+
+app.use('*', (req, res, next) => {
+  console.log(`Handling request for: ${req.originalUrl}`);
+  angularApp
+    .handle(req)
+    .then((response) => {
+      if (response) {
+        console.log(`Rendering response for: ${req.originalUrl}`);
+        writeResponseToNodeResponse(response, res);
+      } else {
+        console.log(
+          `No response for: ${req.originalUrl}, passing to next middleware.`
+        );
+        next(); // Pass control to the next middleware
+      }
+    })
+    .catch((error) => {
+      console.error(`Error handling request for: ${req.originalUrl}`, error);
+      next(error);
+    });
+});
 
 /**
  * Handle all other requests by rendering the Angular application.

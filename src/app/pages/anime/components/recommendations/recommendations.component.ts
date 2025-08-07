@@ -25,7 +25,7 @@ export class RecommendationsComponent implements OnInit, OnDestroy {
       .subscribe((id) => {
         if (
           !this.store.recommendations().list.length ||
-          this.store.recommendations().recommendationsFor !== id.toString()
+          this.store.recommendations().recommendationsFor !== String(id)
         ) {
           this.store.getRecommendations(+id);
         }
