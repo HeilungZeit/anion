@@ -1909,7 +1909,7 @@
   dependencies:
     tslib ">=2.8.1"
 
-"@taiga-ui/addon-preview@^3.117.0":
+"@taiga-ui/addon-preview@4.48.0":
   version "3.117.0"
   resolved "https://registry.yarnpkg.com/@taiga-ui/addon-preview/-/addon-preview-3.117.0.tgz#17d5d39c6f2fd169f3401ef864d2568a81cb91d0"
   integrity sha512-uBY+vu2qBXaUJTscuP2ai3pmeFdUhG65xO49XlIO/B4URBFJQFsnDWZTA2Z5m8Jt0nIO2sAwEWGWyZ6UGv358A==
