@@ -2,7 +2,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   ApplicationConfig,
   importProvidersFrom,
-  provideExperimentalZonelessChangeDetection,
+  provideZonelessChangeDetection,
 } from '@angular/core';
 import {
   GuardsCheckEnd,
@@ -29,7 +29,7 @@ import { provideNgProgressRouter } from 'ngx-progressbar/router';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(),
-    provideExperimentalZonelessChangeDetection(),
+    provideZonelessChangeDetection(),
     // provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,
