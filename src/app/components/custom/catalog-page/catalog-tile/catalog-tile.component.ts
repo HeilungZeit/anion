@@ -8,9 +8,10 @@ import {
   OnInit,
   viewChild,
   WritableSignal,
+  DOCUMENT
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AsyncPipe, DOCUMENT } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { TuiFormatNumberPipe, TuiHint, TuiIcon } from '@taiga-ui/core';
 
 import { AnimeDetailsI } from '../../../../interfaces/anime.types';
