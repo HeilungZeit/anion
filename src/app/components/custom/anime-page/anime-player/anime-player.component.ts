@@ -7,6 +7,7 @@ import {
   ElementRef,
   inject,
   input,
+  OnDestroy,
   OnInit,
   signal,
   viewChild,
@@ -37,6 +38,11 @@ interface VideoData {
   videoId: string;
 }
 
+const SCROLL_SPEED_MULTIPLIER = 4;
+const TOUCH_SENSITIVITY = 1.2;
+const SCROLL_DELAY = 150;
+const DB_CHECK_INTERVAL = 400;
+
 @Component({
   selector: 'ani-player',
   imports: [
@@ -51,7 +57,7 @@ interface VideoData {
 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnimePlayerComponent implements OnInit {
+export class AnimePlayerComponent implements OnInit, OnDestroy {
   readonly videos = input<VideoData[]>([]);
   readonly animeId = input.required<number>();
 
@@ -64,9 +70,65 @@ export class AnimePlayerComponent implements OnInit {
   episodesWrapper = viewChild<ElementRef>('episodesWrapper');
 
   protected indexDbService = inject(IndexDbService);
+  private eventListeners: Array<() => void> = [];
+
+  // Main computed data
+  readonly playersDataWithEpisodes = computed(() =>
+    this.getPlayersDataWithEpisodes(this.videos())
+  );
+
+  readonly dubbersData = computed(() => this.getDubbersData(this.videos()));
+
+  readonly playersData = computed(() => {
+    const dubber = this.selectedDubber();
+    const data = this.playersDataWithEpisodes()?.[dubber];
+    return data
+      ? Object.keys(data).filter((key) => !key.endsWith('-count'))
+      : [];
+  });
+
+  // Current episodes and navigation
+  readonly currentEpisodes = computed(() => {
+    const dubber = this.selectedDubber();
+    const player = this.selectedPlayer();
+    return this.playersDataWithEpisodes()?.[dubber]?.[player] || [];
+  });
+
+  readonly currentEpisodeIndex = computed(() => {
+    const episodes = this.currentEpisodes();
+    const current = this.selectedEpisode();
+    return episodes.findIndex((ep: Episode) => ep.id === current?.id);
+  });
+
+  readonly hasNextEpisode = computed(() => {
+    const index = this.currentEpisodeIndex();
+    return index >= 0 && index < this.currentEpisodes().length - 1;
+  });
+
+  readonly hasPreviousEpisode = computed(() => this.currentEpisodeIndex() > 0);
+
+  readonly currentEpisodesCount = computed(() => this.currentEpisodes().length);
+
+  readonly watchedEpisodesMap = computed(() => {
+    const map = new Map<string, boolean>();
+    const watched = this.indexDbWatchedEpisodes();
+    const dubber = this.selectedDubber();
+    const player = this.selectedPlayer();
+
+    watched.forEach((episode) => {
+      map.set(`${episode.episode}_${dubber}_${player}`, true);
+    });
+
+    return map;
+  });
 
   constructor() {
-    interval(400)
+    this.initializeIndexDb();
+    this.setupEffects();
+  }
+
+  private initializeIndexDb(): void {
+    interval(DB_CHECK_INTERVAL)
       .pipe(
         map(() => this.indexDbService.checkDbInit()),
         distinctUntilChanged(),
@@ -78,128 +140,298 @@ export class AnimePlayerComponent implements OnInit {
           this.indexDbInitialized.set(true);
         }
       });
+  }
 
+  private setupEffects(): void {
+    // Reset state when videos change
     effect(() => {
-      const dubber = this.selectedDubber();
-      if (dubber) {
-        const playersData = this.playersDataWithEpisodesCache()?.[dubber];
-        const firstPlayer = Object.keys(playersData || {}).find(
-          (key) => !key.endsWith('-count')
-        );
-
-        if (firstPlayer) {
-          this.selectedPlayer.set(firstPlayer);
+      const videos = this.videos();
+      if (videos.length > 0) {
+        const dubbers = this.dubbersData().dubbers;
+        if (dubbers.length > 0 && !this.selectedDubber()) {
+          this.selectedDubber.set(dubbers[0]);
         }
       }
     });
 
+    // Auto-select first player when dubber changes
     effect(() => {
       const dubber = this.selectedDubber();
-      const player = this.selectedPlayer();
+      const players = this.playersData();
+      const currentPlayer = this.selectedPlayer();
 
-      if (dubber && player) {
-        const playersData = this.playersDataWithEpisodesCache()?.[dubber];
-        this.selectedEpisode.set(playersData?.[player]?.[0]);
-
-        this.indexDbService.markEpisodeAsWatched(
-          this.animeId(),
-          playersData?.[player]?.[0]?.episode || 1,
-          dubber,
-          player
-        );
+      if (
+        dubber &&
+        players.length > 0 &&
+        (!currentPlayer || !players.includes(currentPlayer))
+      ) {
+        this.selectedPlayer.set(players[0]);
       }
     });
 
+    // Auto-select first episode when episodes change
+    effect(() => {
+      const dubber = this.selectedDubber();
+      const player = this.selectedPlayer();
+      const episodes = this.currentEpisodes();
+
+      if (dubber && player && episodes.length > 0) {
+        // Check if current episode exists in new episodes list
+        const currentEpisode = this.selectedEpisode();
+        const episodeExists =
+          currentEpisode &&
+          episodes.some((ep: Episode) => ep.id === currentEpisode.id);
+
+        if (!episodeExists) {
+          const firstEpisode = episodes[0];
+          this.selectedEpisode.set(firstEpisode);
+          this.markEpisodeAsWatched(firstEpisode);
+        }
+      }
+    });
+
+    // Update watched episodes when dubber/player changes
     effect(async () => {
       const dubber = this.selectedDubber();
       const player = this.selectedPlayer();
 
-      if (this.indexDbInitialized()) {
-        const watchedEpisodes = await this.indexDbService.getWatchedEpisodes(
+      if (this.indexDbInitialized() && dubber && player) {
+        const watched = await this.indexDbService.getWatchedEpisodes(
           this.animeId(),
           dubber,
           player
         );
+        this.indexDbWatchedEpisodes.set(watched);
+      }
+    });
 
-        this.indexDbWatchedEpisodes.set(watchedEpisodes);
+    // Auto-scroll and setup horizontal scroll
+    effect(() => {
+      const episode = this.selectedEpisode();
+      const episodes = this.currentEpisodes();
+
+      if (episode && episodes.length > 0 && this.indexDbInitialized()) {
+        this.clearEventListeners();
+        setTimeout(() => {
+          this.scrollToEpisode(episode);
+          this.setupHorizontalScroll();
+        }, SCROLL_DELAY);
       }
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.videos()?.length > 0) {
       const dubbers = this.dubbersData().dubbers;
       if (dubbers.length > 0) {
-        const firstDubber = dubbers[0];
-
-        this.selectedDubber.set(firstDubber);
-
-        const playersData = this.playersDataWithEpisodesCache()[firstDubber];
-        const firstPlayer = Object.keys(playersData).filter(
-          (key) => !key.endsWith('-count')
-        )[0];
-
-        this.selectedPlayer.set(firstPlayer);
-        this.selectedEpisode.set(playersData?.[firstPlayer]?.[0]);
+        this.selectedDubber.set(dubbers[0]);
       }
     }
   }
 
-  private async initializeLastWatchedEpisode(): Promise<void> {
-    const lastWatchedEpisode =
-      (await this.indexDbService.getWatchedEpisodes(this.animeId())) || null;
-    const lastEpisodeLength = lastWatchedEpisode?.length || 0;
+  ngOnDestroy(): void {
+    this.clearEventListeners();
+  }
 
-    if (!lastWatchedEpisode) return;
+  private clearEventListeners(): void {
+    this.eventListeners.forEach((cleanup) => cleanup());
+    this.eventListeners = [];
+  }
 
-    const lastEpisodeData = lastWatchedEpisode[lastEpisodeLength - 1];
-    this.selectedDubber.set(lastEpisodeData.dubber);
-    this.selectedPlayer.set(lastEpisodeData.player);
+  private addEventListenerWithCleanup(
+    element: HTMLElement,
+    event: string,
+    handler: (event: any) => void,
+    options?: boolean | AddEventListenerOptions
+  ): void {
+    element.addEventListener(event, handler, options);
+    this.eventListeners.push(() => {
+      if (element.isConnected) {
+        element.removeEventListener(event, handler, options);
+      }
+    });
+  }
 
-    const playersData =
-      this.playersDataWithEpisodesCache()[lastEpisodeData.dubber];
-    this.selectedEpisode.set(
-      playersData?.[lastEpisodeData.player]?.find(
-        (episode: Episode) => episode.episode === lastEpisodeData.episode
-      )
+  private setupHorizontalScroll(): void {
+    const episodesElement = this.episodesWrapper()?.nativeElement;
+    if (!episodesElement?.isConnected) return;
+
+    episodesElement.setAttribute('tabindex', '-1');
+
+    // Mouse events
+    this.addEventListenerWithCleanup(episodesElement, 'mouseenter', () => {
+      episodesElement.focus({ preventScroll: true });
+    });
+
+    // Wheel scroll (vertical to horizontal conversion)
+    this.addEventListenerWithCleanup(
+      episodesElement,
+      'wheel',
+      (e: WheelEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const scrollAmount =
+          Math.abs(e.deltaY) > Math.abs(e.deltaX)
+            ? e.deltaY * SCROLL_SPEED_MULTIPLIER
+            : e.deltaX * 2;
+
+        episodesElement.scrollLeft += scrollAmount;
+      },
+      { passive: false, capture: true }
     );
+
+    // Touch gestures
+    this.setupTouchScroll(episodesElement);
+  }
+
+  private setupTouchScroll(element: HTMLElement): void {
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    this.addEventListenerWithCleanup(
+      element,
+      'touchstart',
+      (e: TouchEvent) => {
+        e.stopPropagation();
+        startX = e.touches[0].clientX;
+        startScrollLeft = element.scrollLeft;
+      },
+      { passive: false }
+    );
+
+    this.addEventListenerWithCleanup(
+      element,
+      'touchmove',
+      (e: TouchEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const deltaX = (startX - e.touches[0].clientX) * TOUCH_SENSITIVITY;
+        element.scrollLeft = startScrollLeft + deltaX;
+      },
+      { passive: false }
+    );
+
+    this.addEventListenerWithCleanup(
+      element,
+      'touchend',
+      (e: TouchEvent) => {
+        e.stopPropagation();
+      },
+      { passive: true }
+    );
+  }
+
+  private async initializeLastWatchedEpisode(): Promise<void> {
+    const lastWatchedEpisodes = await this.indexDbService.getWatchedEpisodes(
+      this.animeId()
+    );
+    if (!lastWatchedEpisodes?.length) return;
+
+    const lastEpisode = lastWatchedEpisodes[lastWatchedEpisodes.length - 1];
+
+    this.selectedDubber.set(lastEpisode.dubber);
+    this.selectedPlayer.set(lastEpisode.player);
+
+    // Find and set the target episode
+    setTimeout(() => {
+      const episodes =
+        this.playersDataWithEpisodes()[lastEpisode.dubber]?.[
+          lastEpisode.player
+        ];
+      const targetEpisode = episodes?.find(
+        (ep: Episode) => ep.episode === lastEpisode.episode
+      );
+
+      if (targetEpisode) {
+        this.selectedEpisode.set(targetEpisode);
+      }
+    }, 100);
   }
 
   protected setSelectedEpisode(episode: Episode): void {
     this.selectedEpisode.set(episode);
+    this.markEpisodeAsWatched(episode);
+    this.updateWatchedEpisodes();
+  }
 
+  private markEpisodeAsWatched(episode: Episode): void {
     this.indexDbService.markEpisodeAsWatched(
       this.animeId(),
       episode.episode || 1,
       this.selectedDubber(),
       this.selectedPlayer()
     );
-
-    this.indexDbService
-      .getWatchedEpisodes(
-        this.animeId(),
-        this.selectedDubber(),
-        this.selectedPlayer()
-      )
-      .then((watchedEpisodes) => {
-        this.indexDbWatchedEpisodes.set(watchedEpisodes);
-      });
   }
 
-  private readonly watchedEpisodesMap = computed(() => {
-    const map = new Map<string, boolean>();
-    const watchedEpisodes = this.indexDbWatchedEpisodes();
-    const currentDubber = this.selectedDubber();
-    const currentPlayer = this.selectedPlayer();
+  private async updateWatchedEpisodes(): Promise<void> {
+    const watched = await this.indexDbService.getWatchedEpisodes(
+      this.animeId(),
+      this.selectedDubber(),
+      this.selectedPlayer()
+    );
+    this.indexDbWatchedEpisodes.set(watched);
+  }
 
-    watchedEpisodes.forEach((watchedEpisode) => {
-      const key = `${watchedEpisode.episode}_${currentDubber}_${currentPlayer}`;
-      map.set(key, true);
-    });
+  // Navigation methods
+  protected goToNextEpisode(): void {
+    const episodes = this.currentEpisodes();
+    const currentIndex = this.currentEpisodeIndex();
 
-    return map;
-  });
+    if (currentIndex >= 0 && currentIndex < episodes.length - 1) {
+      this.setSelectedEpisode(episodes[currentIndex + 1]);
+    }
+  }
 
+  protected goToPreviousEpisode(): void {
+    const episodes = this.currentEpisodes();
+    const currentIndex = this.currentEpisodeIndex();
+
+    if (currentIndex > 0) {
+      this.setSelectedEpisode(episodes[currentIndex - 1]);
+    }
+  }
+
+  protected jumpToEpisode(event: Event): void {
+    const episodeNumber = parseInt((event.target as HTMLInputElement).value);
+    if (isNaN(episodeNumber)) return;
+
+    const targetEpisode = this.currentEpisodes().find(
+      (ep: Episode) => ep.episode === episodeNumber
+    );
+
+    if (targetEpisode) {
+      this.setSelectedEpisode(targetEpisode);
+    }
+  }
+
+  private scrollToEpisode(episode: Episode): void {
+    const attemptScroll = (attempt: number = 0): void => {
+      const wrapper = this.episodesWrapper()?.nativeElement;
+      const container = wrapper?.querySelector('.episodes-scroll-container');
+      const element = container?.querySelector(
+        `[data-episode="${episode.episode}"]`
+      ) as HTMLElement;
+
+      if (wrapper && element) {
+        const scrollPosition =
+          element.offsetLeft -
+          wrapper.clientWidth / 2 +
+          element.offsetWidth / 2;
+        wrapper.scrollTo({
+          left: Math.max(0, scrollPosition),
+          behavior: 'smooth',
+        });
+      } else if (attempt < 3) {
+        setTimeout(() => attemptScroll(attempt + 1), 100 * (attempt + 1));
+      }
+    };
+
+    setTimeout(() => attemptScroll(), SCROLL_DELAY);
+  }
+
+  // Helper methods
   protected isEpisodeWatched(episode: Episode): boolean {
     const key = `${
       episode.episode
@@ -207,79 +439,40 @@ export class AnimePlayerComponent implements OnInit {
     return this.watchedEpisodesMap().has(key);
   }
 
-  private readonly playersDataWithEpisodesCache = computed(() =>
-    this.getPlayersDataWithEpisodes(this.videos())
-  );
+  readonly dubberEpisodesCount = (dubber: string): string => {
+    const data = this.playersDataWithEpisodes()?.[dubber] || {};
+    const counts = Object.keys(data).filter((key) => key.endsWith('-count'));
+    if (counts.length === 0) return '(0 эп.)';
 
-  readonly playersData = computed(() =>
-    this.getPlayersData(this.playersDataWithEpisodesCache())
-  );
-
-  readonly playersDataWithEpisodes = computed(() =>
-    this.playersDataWithEpisodesCache()
-  );
-
-  readonly dubberEpisodesCount = (dubber: string) => {
-    const counts = Object.keys(
-      this.playersDataWithEpisodesCache()?.[dubber] || {}
-    )?.filter((key) => key.endsWith('-count'));
-
-    const maxCount = Math.max(
-      ...counts.map(
-        (count) => this.playersDataWithEpisodesCache()[dubber][count]
-      )
-    );
-
+    const maxCount = Math.max(...counts.map((count) => data[count]));
     return `(${maxCount} эп.)`;
   };
 
-  readonly playerEpisodesCount = (dubber: string, player: string) => {
-    const counts = this.playersDataWithEpisodesCache()?.[dubber]?.[player];
-
-    return `(${counts?.length || 0} эп.)`;
+  readonly playerEpisodesCount = (dubber: string, player: string): string => {
+    const episodes = this.playersDataWithEpisodes()?.[dubber]?.[player];
+    return `(${episodes?.length || 0} эп.)`;
   };
-
-  readonly dubbersData = computed(() => this.getDubbersData(this.videos()));
 
   private getDubbersData(videos: VideoData[]): {
     dubbers: string[];
     subtitles: string[];
   } {
-    return videos.reduce(
-      (acc, { data: { dubbing } }) => {
-        const dubbingLower = dubbing.toLowerCase();
-        const isDubber =
-          dubbingLower.startsWith('озвучка') ||
-          !dubbingLower.startsWith('субтитры');
+    const dubbers: string[] = [];
+    const subtitles: string[] = [];
+    const seen = new Set<string>();
 
-        if (!acc.dubbersSet.has(dubbing)) {
-          (isDubber ? acc.dubbers : acc.subtitles).push(dubbing);
-          acc.dubbersSet.add(dubbing);
-        }
+    videos.forEach(({ data: { dubbing } }) => {
+      if (seen.has(dubbing)) return;
 
-        return acc;
-      },
-      {
-        dubbers: [] as any[],
-        subtitles: [] as any[],
-        dubbersSet: new Set<string>(),
-      }
-    );
-  }
-
-  private getPlayersData(videos: { [k: string]: any }) {
-    const mapOfPlayers = new Set<string>();
-
-    Object.keys(videos[this.selectedDubber()]).forEach((key) => {
-      if (!key.endsWith('-count')) {
-        mapOfPlayers.add(key);
-      }
+      const isSubtitle = dubbing.toLowerCase().startsWith('субтитры');
+      (isSubtitle ? subtitles : dubbers).push(dubbing);
+      seen.add(dubbing);
     });
 
-    return Array.from(mapOfPlayers);
+    return { dubbers, subtitles };
   }
 
-  private getPlayersDataWithEpisodes(videos: VideoData[]) {
+  private getPlayersDataWithEpisodes(videos: VideoData[]): Record<string, any> {
     return videos.reduce((acc, video) => {
       if (video.data.player === 'Плеер Aksor') return acc;
 
@@ -290,21 +483,23 @@ export class AnimePlayerComponent implements OnInit {
         videoId,
       } = video;
 
+      // Initialize dubbing data
       if (!acc[dubbing]) {
         acc[dubbing] = { [`${player}-count`]: number };
       }
 
-      const dubbingData = acc[dubbing];
-
-      if (!dubbingData[player]) {
-        dubbingData[player] = [];
+      // Initialize player episodes array
+      if (!acc[dubbing][player]) {
+        acc[dubbing][player] = [];
       }
 
-      dubbingData[player].push({ episode: number, iframeUrl, id: videoId });
-      dubbingData[player].sort((a: any, b: any) => a.episode - b.episode);
+      // Add episode and sort
+      acc[dubbing][player].push({ episode: number, iframeUrl, id: videoId });
+      acc[dubbing][player].sort((a: any, b: any) => a.episode - b.episode);
 
-      dubbingData[`${player}-count`] = Math.max(
-        dubbingData[`${player}-count`] || 0,
+      // Update count
+      acc[dubbing][`${player}-count`] = Math.max(
+        acc[dubbing][`${player}-count`] || 0,
         number
       );
 

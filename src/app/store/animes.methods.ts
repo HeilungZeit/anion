@@ -134,6 +134,12 @@ export const createAnimeMethods = (
       }
     },
 
+    clearSearchResults(): void {
+      patchState(store, {
+        search: { searchResults: [], isSearchLoading: false },
+      });
+    },
+
     setCatalogQueryParams(
       query: AnimeQueryI,
       useReceivedQuery: boolean = false

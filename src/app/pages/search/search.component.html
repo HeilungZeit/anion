@@ -1,16 +1,13 @@
 <ani-content>
   <h1 class="mt-15 ml-15 mb-20">Поиск</h1>
 
-  <search class="search-wrapper" tuiSearch>
+  <div class="search-wrapper">
     <form [formGroup]="searchForm">
-      <fieldset tuiTextfieldSize="m">
-        <tui-textfield iconStart="@tui.search">
-          <input formControlName="search" placeholder="Введите название..." tuiTextfield />
-        </tui-textfield>
-
-      </fieldset>
+      <tui-textfield iconStart="@tui.search" (click)="focusInput()">
+        <input #searchInput formControlName="search" placeholder="Введите название..." tuiTextfield />
+      </tui-textfield>
     </form>
-  </search>
+  </div>
 
   <section class="search-list flex gap-10">
     @if (store.search().searchResults.length > 0) {
@@ -21,9 +18,6 @@
         ></ani-catalog-tile>
       }
     } @else {
-      <!-- <div class="loader-container">
-        <ani-video-loader></ani-video-loader>
-      </div> -->
       <div class="search-list__empty">
         <span class="search-list__empty-text">Введите название аниме</span>
       </div>

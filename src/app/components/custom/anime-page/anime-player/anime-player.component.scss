@@ -17,92 +17,214 @@
   min-width: 320px;
 }
 
-.episodes-wrapper {
-  position: relative;
-  width: 97%;
-  max-height: 200px;
-  overflow-y: scroll;
-  box-sizing: border-box;
-  user-select: none;
-  scroll-behavior: smooth;
+/* Episodes section container */
+.episodes-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
 
-  position: relative;
-  pointer-events: auto !important;
+/* Episodes header with title and controls */
+.episodes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.episodes-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.episodes-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.episodes-count {
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.episode-input {
+  width: 60px;
+  padding: 6px 8px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
 
   &:focus {
     outline: none;
+    border-color: var(--secondary-color);
   }
-  
-  /* Приоритет обработки событий скролла */
-  touch-action: pan-y;
-  
-  /* Важно для событий скролла на macOS */
-  will-change: scroll-position;
-  
-  /* Принудительное создание нового контекста прокрутки */
-  transform: translateZ(0);
 
-  &::-webkit-scrollbar {
-    width: 4px;
-    display: block;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
-  &::-webkit-scrollbar-thumb {
-    background-color: #666;
-    border-radius: 4px;
-  }
-  
-  /* Специальные флаги для принудительного рендеринга скролла */
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  
-  /* Создаём новый контекст наложения */
-  isolation: isolate;
-  z-index: 1;
-
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-content: flex-start;
 }
 
-.episode-item {
-  flex: 0 0 auto; /* запрещаем сжиматься/растягиваться */
-  font-size: 19px;
-  border: 1px solid #636363;
-  color: #fff;
-  padding: 5px;
-  border-radius: 5px;
+.nav-btn {
   width: 32px;
   height: 32px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  margin-bottom: 5px;
+  transition: all 0.2s ease;
 
-  &:hover {
-    background-color: #636363;
-  }
-}
-
-div.selected {
-  background-color: var(--secondary-color);
-  border-color: var(--secondary-color);
-
-  &:hover {
-    background-color: var(--secondary-color);
+  &:hover:not(:disabled) {
+    background: var(--secondary-color);
     border-color: var(--secondary-color);
   }
-}
 
-.watched {
-  background-color: #636363;
-  border-color: #636363;
-
-  &:hover {
-    opacity: 0.8;
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
+
+/* Episodes wrapper with horizontal scroll */
+.episodes-wrapper {
+  position: relative;
+  width: 97%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid #444;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px;
+
+  /* Complete scroll isolation */
+  overscroll-behavior: contain;
+  scroll-behavior: auto; /* Changed from smooth for faster response */
+  
+  /* Create new stacking context */
+  isolation: isolate;
+  z-index: 10;
+  
+  /* Force hardware acceleration */
+  transform: translateZ(0);
+  will-change: scroll-position;
+
+  /* Horizontal scrollbar styling */
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #666;
+    border-radius: 3px;
+    
+    &:hover {
+      background-color: #888;
+    }
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+}
+
+.episodes-scroll-container {
+  display: flex;
+  gap: 8px;
+  min-width: min-content;
+  padding-bottom: 4px;
+}
+
+.episode-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  height: 56px;
+  padding: 8px 6px;
+  border: 2px solid #444;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  .episode-number {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .episode-status {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 16px;
+    height: 16px;
+    background: #22c55e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: white;
+    border: 2px solid #000;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #666;
+    transform: translateY(-2px);
+  }
+
+  &.watched {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #22c55e;
+    color: #fff;
+
+    &:hover {
+      background: rgba(34, 197, 94, 0.3);
+    }
+  }
+
+  &.selected,
+  &.current {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: #000;
+    font-weight: 700;
+    transform: scale(1.05);
+
+    .episode-status {
+      border-color: var(--secondary-color);
+    }
+
+    &:hover {
+      background: var(--secondary-color);
+      border-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+  }
+}
+
+
 
 .player-wrapper {
   height: 700px;

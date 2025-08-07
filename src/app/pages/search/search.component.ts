@@ -1,8 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TuiTextfield } from '@taiga-ui/core';
-import { TuiDataListWrapper } from '@taiga-ui/kit';
-import { TuiSearch } from '@taiga-ui/layout';
 
 import { ContentLayout } from '../../layouts/content/content.component';
 import { CatalogTileComponent } from '../../components/custom/catalog-page/catalog-tile/catalog-tile.component';
@@ -15,21 +20,21 @@ import { debounceTime, Subscription } from 'rxjs';
     ContentLayout,
     CatalogTileComponent,
     ReactiveFormsModule,
-    TuiDataListWrapper,
-    TuiSearch,
     TuiTextfield,
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
 })
-export class SearchComponent {
+export class SearchComponent implements OnDestroy {
   private subscriptions = new Subscription();
+
+  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
 
   lastAnimeElement = signal(null);
   store = inject(AnimesStore);
 
   protected readonly searchForm = new FormGroup({
-    search: new FormControl(''),
+    search: new FormControl<string>(''),
   });
 
   constructor() {
@@ -37,16 +42,24 @@ export class SearchComponent {
       this.searchForm
         .get('search')
         ?.valueChanges.pipe(debounceTime(500))
-        .subscribe((value: any) => {
-          if (value) {
+        .subscribe((value: string | null) => {
+          if (value && value.trim()) {
             this.store.searchAnime({
-              search: value,
+              search: value.trim(),
               offset: 0,
               limit: 10,
             });
+          } else {
+            this.store.clearSearchResults();
           }
         })
     );
+  }
+
+  focusInput() {
+    setTimeout(() => {
+      this.searchInput?.nativeElement.focus();
+    }, 0);
   }
 
   ngOnDestroy() {

@@ -1,6 +1,11 @@
 .search-wrapper {
     width: 40%;
     padding: 0 45px;
+    
+    tui-textfield {
+        width: 100%;
+        cursor: pointer;
+    }
 }
 
 .search-list {

@@ -38,12 +38,34 @@
     </tui-select>
   </div>
 
-  <div class="episodes-wrapper" #episodesWrapper>
-    @for (item of playersDataWithEpisodes()[selectedDubber()]?.[selectedPlayer()] || []; track item.id) {
-      <div class="episode-item" [class.selected]="selectedEpisode()?.id === item.id" [class.watched]="isEpisodeWatched(item)" (click)="setSelectedEpisode(item)">
-        {{ item.episode }}
+  <!-- Episodes navigation section -->
+  <div class="episodes-section">
+    <div class="episodes-header">
+      <div class="episodes-info">
+        <span class="episodes-title">Эпизоды</span>
+        <span class="episodes-count">({{ currentEpisodesCount() }} эп.)</span>
       </div>
-    }
+    </div>
+
+    <div class="episodes-wrapper" #episodesWrapper>
+      <div class="episodes-scroll-container">
+        @for (item of playersDataWithEpisodes()[selectedDubber()]?.[selectedPlayer()] || []; track item.id) {
+          <div 
+            class="episode-item" 
+            [class.selected]="selectedEpisode()?.id === item.id" 
+            [class.watched]="isEpisodeWatched(item)"
+            [class.current]="selectedEpisode()?.id === item.id"
+            [attr.data-episode]="item.episode"
+            (click)="setSelectedEpisode(item)"
+          >
+            <span class="episode-number">{{ item.episode }}</span>
+            @if (isEpisodeWatched(item)) {
+              <span class="episode-status">✓</span>
+            }
+          </div>
+        }
+      </div>
+    </div>
   </div>
 
   <div class="player-wrapper w-full">
